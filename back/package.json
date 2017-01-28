@@ -1,0 +1,10 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "*",
+    "session.socket.io": "*",
+    "socket.io": "*",
+    "underscore": "^1.8.3"
+  }
+}
