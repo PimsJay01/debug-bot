@@ -6,41 +6,16 @@ var server = http.createServer()
 // Chargement de socket.io
 var io = require('socket.io').listen(server)
 
-// Loading stdin read
-const readline = require('readline')
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
-
-// reset the global datastructures, put the server in initial state
-function reset(){
-  console.log('Server reset')
-}
-
-// list of commands recognised by the server
-var serverCommands = {'reset' : reset}
-
-// read and manage commands from stdin
-rl.on('line', (input) => {
-  var command = input.trim();
-  console.log(`Command : `+ command);
-  if(command in serverCommands){
-    serverCommands[command]();
-  } else {
-    console.log(`Unknown command : `+ command);
-  }
-})
+// TODO Move classes in another files and import them here
 
 class Robot {
-    constructor(name, position, health, id) {
+    constructor(id, name, position, health) {
+        this.id = id
         this.name = name
         this.position = position
         this.health = health
         this.cards = []
         this.program = []
-        this.id = id
         this.ready = false
     }
 }
@@ -67,20 +42,27 @@ class Game {
         this['maxPlayers'] = 2
     }
     addRobot(robot) {
-        this.robots.push(robot)
+        if(game.robots.length < this.maxPlayers) {
+            this.robots.push(robot)
+        }
         return game.robots.length == this.maxPlayers
     }
-    getRobot(id){
-        for (var robot in this.robots) {
-            if (robot.id = id) {
-                return robot
-            }
-        }
+    removeRobot(id) {
+        this.robots = _.filter(this.robots, (robot) => { return robot.id != id })
     }
-    isReady(){
+    getRobot(id){
+        return _.find(this.robots, (robot) => { return robot.id == id })
+    }
+    setRobotReady(id){
+        let robot = this.getRobot(id)
+        if(robot != void 0) {
+            robot.ready = true;
+        }
+        console.info('setRobotReady', this.robots);
+    }
+    isRobotsReady(){
         if(this.robots.length == this['maxPlayers']) {
-            return true;
-            // return _.every(this.robots, (robot) => {return robot.ready} )
+            return _.every(this.robots, (robot) => { return robot.ready })
         }
         return false;
     }
@@ -94,44 +76,88 @@ const initalPositions = [
     {x: 0, y: 7}
 ]
 
-var board = []
-for (let x = 0; x < 18; x++) {
-    board[x] = []
-    for (let y = 0; y < 9; y++) {
-        board[x][y] = new Box(0, [false, false, false, false])
+// TODO parse file to get board 9x18
+function initBoard() {
+    var board = []
+    for (let x = 0; x < 18; x++) {
+        board[x] = []
+        for (let y = 0; y < 9; y++) {
+            board[x][y] = new Box(0, [false, false, false, false])
+        }
     }
+    return board;
 }
+var game = new Game(initBoard())
 
-var game = new Game(board)
+/* TODO parse file to get cards
+ * u-turn       6   1-6
+ * rotate left  18  7-41 (2)
+ * rotate left  18  8-42 (2)
+ * back-up      6   43-48
+ * move 1       18  49-66
+ * move 2       12  67-78
+ * move 3       6   79-84
+ */
 var cards = []
 
-io.sockets.on('connection', (socket) => {
+// Loading stdin read
+const readline = require('readline')
 
-  console.info('new connection id ' + socket.id)
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
+
+// reset the global datastructures, put the server in initial state
+function reset(){
+    console.log('Server reset')
+}
+
+// list of commands recognised by the server
+var serverCommands = { reset }
+
+// read and manage commands from stdin
+rl.on('line', (input) => {
+    var command = input.trim()
+    console.log(`Command : `+ command)
+    if(command in serverCommands){
+        serverCommands[command]()
+    } else {
+        console.log(`Unknown command : `+ command)
+    }
+})
+
+io.sockets.on('connection', (socket) => {
+  console.info('client:connect', socket.id)
 
   socket.on('client:name', (name) => {
       console.info('client:name', name)
+      console.info('client:id', socket.id)
+    //   socket.emit('server:id', socket.id)
 
-      if(game.addRobot(new Robot(name, initalPositions[game.robots.length], maxHealth))) {
+      if(game.addRobot(new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth))) {
           console.info('server:init')
           socket.broadcast.emit('server:init', game)
       }
   })
 
   socket.on('client:ready', () => {
-      console.info('client:ready')
+      console.info('client:ready') // TODO socket.id != (previous)socket.id
+      console.info('client:id', socket.id)
 
-      if(game.isReady()){
+      game.setRobotReady(socket.id)
+      if(game.isRobotsReady()){
           console.info('everybody is ready')
+
+          // TODO send cards to each client in game.robots
       }
   })
 
-  // Send id client and game preferences
-  socket.emit('session', socket.id)
-  socket.emit('init', game)
-
   // When client disconnect...
-  socket.on('disconnect', function() {})
+  socket.on('disconnect', () => {
+      console.info('client:disconnect', socket.id)
+      game.removeRobot(socket.id)
+  })
 })
 
 setInterval(function(){
