@@ -136,7 +136,8 @@ io.sockets.on('connection', (socket) => {
 
       if(game.addRobot(new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth))) {
           console.info('server:init')
-          socket.broadcast.emit('server:init', game)
+          io.sockets.emit('server:init', game);
+        //   socket.broadcast.emit('server:init', game)
       }
   })
 
