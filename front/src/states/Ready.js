@@ -1,9 +1,6 @@
 import Phaser from 'phaser'
 import { res } from '../res'
 
-import io from 'socket.io-client'
-let socket = io(`http://localhost:7777`)
-
 export default class extends Phaser.State {
 
     init () {
@@ -25,7 +22,7 @@ export default class extends Phaser.State {
     render () {}
 
     emitReady() {
-        socket.emit('client:ready', this.game.id)
+        window.socket.emit('client:ready', this.game.id)
         console.info('client:ready')
     }
 }

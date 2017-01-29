@@ -9,7 +9,6 @@ import GameState from './states/Game'
 import config from './config'
 
 import io from 'socket.io-client'
-let socket = io(`http://localhost:7777`)
 
 class Game extends Phaser.Game {
 
@@ -24,35 +23,29 @@ class Game extends Phaser.Game {
     this.state.add('Ready', ReadyState, false)
     this.state.add('Game', GameState, false)
 
-    socket.on('server:caca', (id) => {
-        console.info('server:id', id)
-
-        if(id != void 0) {
-            this.id = id
-        }
-    })
-
-    socket.on('server:init', (game) => {
-        console.info('server:init', game)
-        this.datas = game
-        this.state.start('Ready')
-    })
-
-    socket.on('server:cards', ({ game, cards }) => {
-        console.info('server:cards', { game, cards })
-        this.datas = game;
-        this.cards = cards;
-        this.state.start('Game')
-    })
-
-    socket.on('server:gameover', () => {
-        console.info('server:gameover')
-
-        this.state.start('Welcome')
-    })
-
     this.state.start('Welcome')
   }
 }
 
 window.game = new Game()
+
+window.socket = io(`http://localhost:7777`);
+
+window.socket.on('server:init', (game) => {
+    console.info('server:init', game)
+    window.game.datas = game
+    window.game.state.start('Ready')
+})
+
+window.socket.on('server:cards', ({ game, cards }) => {
+    console.info('server:cards', { game, cards })
+    window.game.datas = game;
+    window.game.cards = cards;
+    window.game.state.start('Game')
+})
+
+window.socket.on('server:gameover', () => {
+    console.info('server:gameover')
+
+    window.game.state.start('Welcome')
+})

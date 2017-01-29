@@ -133,7 +133,6 @@ io.sockets.on('connection', (socket) => {
   socket.on('client:name', (name) => {
       console.info('client:name', name)
       console.info('client:id', socket.id)
-    //   socket.emit('server:id', socket.id)
 
       if(game.addRobot(new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth))) {
           console.info('server:init')
@@ -142,7 +141,7 @@ io.sockets.on('connection', (socket) => {
   })
 
   socket.on('client:ready', () => {
-      console.info('client:ready') // TODO socket.id != (previous)socket.id
+      console.info('client:ready')
       console.info('client:id', socket.id)
 
       game.setRobotReady(socket.id)
