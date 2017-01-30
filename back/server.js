@@ -48,21 +48,20 @@ class Game {
         return game.robots.length == this.maxPlayers
     }
     removeRobot(id) {
-        this.robots = _.filter(this.robots, (robot) => { return robot.id != id })
+        this.robots = _.filter(this.robots, robot => { return robot.id != id })
     }
     getRobot(id){
-        return _.find(this.robots, (robot) => { return robot.id == id })
+        return _.find(this.robots, robot => { return robot.id == id })
     }
     setRobotReady(id){
         let robot = this.getRobot(id)
-        if(robot != void 0) {
+        if(!_.isUndefined(robot)) {
             robot.ready = true;
         }
-        console.info('setRobotReady', this.robots);
     }
     isRobotsReady(){
         if(this.robots.length == this['maxPlayers']) {
-            return _.every(this.robots, (robot) => { return robot.ready })
+            return _.every(this.robots, robot => { return robot.ready })
         }
         return false;
     }
@@ -90,14 +89,14 @@ function initBoard() {
 var game = new Game(initBoard())
 
 /* TODO parse file to get cards
- * u-turn       6   1-6
- * rotate left  18  7-41 (2)
- * rotate left  18  8-42 (2)
- * back-up      6   43-48
- * move 1       18  49-66
- * move 2       12  67-78
- * move 3       6   79-84
- */
+* 0: u-turn       6   1-6
+* 1: rotate left  18  7-41 (2)
+* 2: rotate left  18  8-42 (2)
+* 3: back-up      6   43-48
+* 4: move 1       18  49-66
+* 5: move 2       12  67-78
+* 6: move 3       6   79-84
+*/
 var cards = []
 
 // Loading stdin read
@@ -117,7 +116,7 @@ function reset(){
 var serverCommands = { reset }
 
 // read and manage commands from stdin
-rl.on('line', (input) => {
+rl.on('line', input => {
     var command = input.trim()
     console.log(`Command : `+ command)
     if(command in serverCommands){
@@ -127,17 +126,17 @@ rl.on('line', (input) => {
     }
 })
 
-io.sockets.on('connection', (socket) => {
+io.sockets.on('connection', socket => {
   console.info('client:connect', socket.id)
 
-  socket.on('client:name', (name) => {
+  socket.on('client:name', name => {
       console.info('client:name', name)
       console.info('client:id', socket.id)
 
-      if(game.addRobot(new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth))) {
+      let robot = new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth)
+      if(game.addRobot(robot)) {
           console.info('server:init')
-          io.sockets.emit('server:init', game);
-        //   socket.broadcast.emit('server:init', game)
+          io.sockets.emit('server:init', { game, robot })
       }
   })
 
@@ -149,7 +148,14 @@ io.sockets.on('connection', (socket) => {
       if(game.isRobotsReady()){
           console.info('everybody is ready')
 
-          // TODO send cards to each client in game.robots
+          _.each(game.robots, robot => {
+              // TODO get 9 cards randomly from deck game.cards[]
+              robot.cards = _.times(9, n => {
+                  return new Card(_.random(0, 6), _.random(1, 84))
+              })
+              console.info('server:cards', robot.id)
+              io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+          })
       }
   })
 
@@ -160,8 +166,7 @@ io.sockets.on('connection', (socket) => {
   })
 })
 
-setInterval(function(){
-}, 1000);
+// setInterval(() => {}, 1000)
 
 server.listen(7777)
 console.info('server started')

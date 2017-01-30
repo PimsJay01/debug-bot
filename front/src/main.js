@@ -31,16 +31,17 @@ window.game = new Game()
 
 window.socket = io(`http://localhost:7777`);
 
-window.socket.on('server:init', (game) => {
-    console.info('server:init', game)
+window.socket.on('server:init', ({ game, robot }) => {
+    console.info('server:init', { game, robot })
     window.game.datas = game
+    window.game.robot = robot
     window.game.state.start('Ready')
 })
 
-window.socket.on('server:cards', ({ game, cards }) => {
-    console.info('server:cards', { game, cards })
-    window.game.datas = game;
-    window.game.cards = cards;
+window.socket.on('server:cards', ({ game, robot }) => {
+    console.info('server:cards', { game, robot })
+    window.game.datas = game
+    window.game.robot = robot
     window.game.state.start('Game')
 })
 
