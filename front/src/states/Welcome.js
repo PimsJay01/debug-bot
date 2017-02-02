@@ -1,4 +1,4 @@
-// import Phaser from 'phaser'
+import Phaser from 'phaser'
 
 // import input from '@orange-games/phaser-input'
 
@@ -13,9 +13,13 @@ export default class extends Phaser.State {
     }
 
     create () {
-        this.emitName('Player')
+        game.add.text(40, 40, 'Awaiting on others players...', {
+            font: "32px Arial",
+            fill: "#ffffff",
+            align: "center"
+        })//.anchor.setTo(0.5, 0)
 
-        // console.log(input);
+        this.emitName('Player')
     }
 
     render () {}

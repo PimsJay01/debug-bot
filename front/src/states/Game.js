@@ -1,4 +1,4 @@
-// import Phaser from 'phaser'
+import Phaser from 'phaser'
 
 export default class extends Phaser.State {
 
@@ -10,7 +10,16 @@ export default class extends Phaser.State {
         this.stage.backgroundColor = '#0000FF'
     }
 
-    create () {}
+    create () {
+        for(let i = 0; i<game.robot.cards.length; i++) {
+            var text = game.robot.cards[i].type + ' ' + game.robot.cards[i].priority
+            game.add.text(40, 40 + (i * 40), text, {
+                font: "32px Arial",
+                fill: "#ffffff",
+                align: "center"
+            })
+        }
+    }
 
     render () {}
 }

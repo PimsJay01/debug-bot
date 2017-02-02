@@ -1,4 +1,4 @@
-// import Phaser from 'phaser'
+import Phaser from 'phaser'
 import { res } from '../res'
 
 export default class extends Phaser.State {
@@ -17,6 +17,12 @@ export default class extends Phaser.State {
         var playButton = this.game.add.button(this.game.width/2, this.game.height/2, 'readyBtn', this.emitReady, this);
         playButton.anchor.setTo(0.5);
         playButton.scale.setTo(0.55,0.55);
+
+        game.add.text(40, 40, 'Are you ready ?', {
+            font: "32px Arial",
+            fill: "#ffffff",
+            align: "center"
+        })//.anchor.setTo(0.5, 0)
     }
 
     render () {}
