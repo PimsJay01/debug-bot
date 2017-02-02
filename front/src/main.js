@@ -1,6 +1,6 @@
 import 'pixi'
 import 'p2'
-import Phaser from 'phaser'
+// import Phaser from 'phaser'
 
 import WelcomeState from './states/Welcome'
 import ReadyState from './states/Ready'

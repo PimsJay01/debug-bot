@@ -1,4 +1,6 @@
-import Phaser from 'phaser'
+// import Phaser from 'phaser'
+
+// import input from '@orange-games/phaser-input'
 
 export default class extends Phaser.State {
 
@@ -12,6 +14,8 @@ export default class extends Phaser.State {
 
     create () {
         this.emitName('Player')
+
+        // console.log(input);
     }
 
     render () {}

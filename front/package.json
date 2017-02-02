@@ -1,8 +1,8 @@
 {
-  "name": "PhaserES6Webpack",
+  "name": "Debug-Bot",
   "version": "1.0.0",
   "description": "",
-  "author": "leandro cabrera <leandcabrera@gmail.com>",
+  "author": "Jérémy Gobet <jeremy.gobet.72@gmail.com> & Pierre Kunzli <pkunzli@gmail.com>",
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@orange-games/phaser-input": "^2.0.2",
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
     "babel-polyfill": "^6.20.0",
@@ -27,6 +28,7 @@
   "dependencies": {
     "phaser-ce": "^2.7.3",
     "socket.io-client": "^1.7.2",
+    "systemjs": "^0.20.4",
     "underscore": "^1.8.3",
     "webfontloader": "^1.6.27"
   }

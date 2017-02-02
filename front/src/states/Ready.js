@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+// import Phaser from 'phaser'
 import { res } from '../res'
 
 export default class extends Phaser.State {
