@@ -4,17 +4,17 @@ import Phaser from 'phaser'
 
 export default class extends Phaser.State {
 
-    init () {
+    init() {
         console.info('welcome:init')
     }
 
-    preload () {
+    preload() {
         this.stage.backgroundColor = '#FF0000'
     }
 
-    create () {
+    create() {
         game.add.text(40, 40, 'Awaiting on others players...', {
-            font: "32px Arial",
+            font: "24px Arial",
             fill: "#ffffff",
             align: "center"
         })//.anchor.setTo(0.5, 0)
@@ -22,7 +22,7 @@ export default class extends Phaser.State {
         this.emitName('Player')
     }
 
-    render () {}
+    render() {}
 
     emitName(name) {
         window.socket.emit('client:name', name)

@@ -3,32 +3,33 @@ import { res } from '../res'
 
 export default class extends Phaser.State {
 
-    init () {
+    init() {
         console.info('ready:init')
     }
 
-    preload () {
+    preload() {
         this.stage.backgroundColor = '#00FF00'
 
-        this.game.load.image('readyBtn', res.images.readyBtn);
+        game.load.image('readyBtn', res.images.readyBtn);
     }
 
-    create () {
-        var playButton = this.game.add.button(this.game.width/2, this.game.height/2, 'readyBtn', this.emitReady, this);
+    create() {
+        var playButton = game.add.button(game.width/2, game.height/2, 'readyBtn', this.emitReady, this);
         playButton.anchor.setTo(0.5);
         playButton.scale.setTo(0.55,0.55);
 
         game.add.text(40, 40, 'Are you ready ?', {
-            font: "32px Arial",
+            font: "24px Arial",
             fill: "#ffffff",
             align: "center"
         })//.anchor.setTo(0.5, 0)
     }
 
-    render () {}
+    render() {}
 
-    emitReady() {
-        window.socket.emit('client:ready', this.game.id)
+    emitReady(btn) {
+        window.socket.emit('client:ready', game.id)
         console.info('client:ready')
+        btn.visible = false
     }
 }

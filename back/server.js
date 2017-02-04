@@ -21,7 +21,8 @@ class Robot {
 }
 
 class Card {
-    constructor(type, priority) {
+    constructor(id, type, priority) {
+        this.id = id
         this.type = type
         this.priority = priority
     }
@@ -182,7 +183,7 @@ console.log(game.board)
 /* TODO parse file to get cards
 * 0: u-turn       6   1-6
 * 1: rotate left  18  7-41 (2)
-* 2: rotate left  18  8-42 (2)
+* 2: rotate right  18  8-42 (2)
 * 3: back-up      6   43-48
 * 4: move 1       18  49-66
 * 5: move 2       12  67-78
@@ -236,19 +237,27 @@ io.sockets.on('connection', socket => {
       console.info('client:id', socket.id)
 
       game.setRobotReady(socket.id)
-      if(game.isRobotsReady()){
+      if(game.isRobotsReady()) {
           console.info('everybody is ready')
 
           _.each(game.robots, robot => {
               // TODO get 9 cards randomly from deck game.cards[]
               robot.cards = _.times(9, n => {
-                  return new Card(_.random(0, 6), _.random(1, 84))
+                  return new Card(0, _.random(0, 6), _.random(1, 84))
               })
               console.info('server:cards', robot.id)
               io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
           })
       }
   })
+
+  socket.on('client:program', (program) => {
+      console.info('client:program', program)
+      console.info('client:id', socket.id)
+
+      // TODO Update & check game.getRobot(...).cards & .program
+  })
+
 
   // When client disconnect...
   socket.on('disconnect', () => {
