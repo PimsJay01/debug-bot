@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 
 import _ from 'underscore'
+import moment from 'moment'
 
 export default class extends Phaser.State {
 
@@ -13,6 +14,9 @@ export default class extends Phaser.State {
     }
 
     create() {
+        this.counter = this.createText(10, 10)
+        this.counter.text = this.getCounter()
+
         this.cards = []
         _.each(_.range(9), index => {
             let text = this.createCardText(index)
@@ -53,22 +57,38 @@ export default class extends Phaser.State {
     }
 
     createCardText(index) {
-        return game.add.text(10, 10 + (index * 40), "", {
-            font: "24px Arial",
-            fill: "#ffffff",
-            align: "center"
-        })
+        return this.createText(10, 40 + (index * 30))
     }
     createInstructionText(index) {
-        return game.add.text(10 + game.width/2, 10 + (index * 40), "", {
-            font: "24px Arial",
+        return this.createText(10 + (game.width / 2), 40 + (index * 30))
+    }
+
+    createText(posX, posY) {
+        return game.add.text(posX, posY, "", {
+            font: "20px Arial",
             fill: "#ffffff",
             align: "center"
         })
     }
 
     render() {
-        // text[idx].setText('Counter ' + idx + ' = ' + counters[idx]);
+        this.counter.text = this.getCounter()
+    }
+
+    getCounter() {
+        if(!this.isTime()) {
+            return "0:00"
+        }
+        let diff = this.getTimeDiff()
+        return [diff.minutes(), diff.seconds()].join(':')
+    }
+
+    getTimeDiff() {
+        return moment.duration(-moment().diff(game.datas.deadline))
+    }
+
+    isTime() {
+        return this.getTimeDiff().asMinutes() > 0
     }
 
     getCardTypeName(card) {
@@ -94,7 +114,7 @@ export default class extends Phaser.State {
     }
 
     cardClick(text) {
-        if((text.text != "") && (game.robot.program.length < 5)) {
+        if((text.text != "") && (game.robot.program.length < 5) && this.isTime()) {
             let card = game.robot.cards[text.index]
             game.robot.cards.splice(text.index, 1);
             game.robot.program.push(card)
@@ -103,7 +123,7 @@ export default class extends Phaser.State {
     }
 
     programClick(text) {
-        if(text.text != "") {
+        if((text.text != "") && this.isTime()) {
             let card = game.robot.program[text.index]
             game.robot.program.splice(text.index, 1);
             game.robot.cards.push(card)

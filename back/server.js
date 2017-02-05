@@ -2,6 +2,7 @@ var http = require('http')
 var server = http.createServer()
 
 var _ = require('underscore')
+var moment = require('moment');
 var io = require('socket.io').listen(server)
 
 // Models
@@ -71,6 +72,9 @@ io.sockets.on('connection', socket => {
       game.setRobotReady(socket.id)
       if(game.isRobotsReady()) {
           console.info('everybody is ready')
+
+          game.deadline = moment().add(120, 'seconds')
+          // TODO Start counter
 
           _.each(game.robots, robot => {
               // TODO get 9 cards randomly from deck game.cards[]

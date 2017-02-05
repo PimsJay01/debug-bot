@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "express": "*",
+    "moment": "^2.17.1",
     "session.socket.io": "*",
     "socket.io": "*",
     "underscore": "^1.8.3"
