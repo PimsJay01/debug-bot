@@ -11,6 +11,8 @@ export default class extends Phaser.State {
 
     preload() {
         this.stage.backgroundColor = '#0000FF'
+
+        // game.plugins.add(new Phaser.Plugin.Isometric(game))
     }
 
     create() {
@@ -59,6 +61,7 @@ export default class extends Phaser.State {
     createCardText(index) {
         return this.createText(10, 40 + (index * 30))
     }
+
     createInstructionText(index) {
         return this.createText(10 + (game.width / 2), 40 + (index * 30))
     }
