@@ -26,10 +26,10 @@ module.exports = class Game {
         return this.robots.length == this.maxPlayers
     }
     removeRobot(id) {
-        this.robots = _.filter(this.robots, robot => { return robot.id != id })
+        this.robots = _.filter(this.robots, robot => robot.id != id)
     }
     getRobot(id){
-        return _.find(this.robots, robot => { return robot.id == id })
+        return _.find(this.robots, robot => robot.id == id)
     }
     setRobotReady(id){
         let robot = this.getRobot(id)
@@ -39,7 +39,7 @@ module.exports = class Game {
     }
     isRobotsReady(){
         if(this.robots.length == this['maxPlayers']) {
-            return _.every(this.robots, robot => { return robot.ready })
+            return _.every(this.robots, robot => robot.ready)
         }
         return false;
     }

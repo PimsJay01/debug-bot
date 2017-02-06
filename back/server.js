@@ -81,9 +81,7 @@ io.sockets.on('connection', socket => {
   })
 
   socket.on('client:program', (program) => {
-      console.info('client:program', _.map(program, card => {
-          return _.values(card)
-      }))
+      console.info('client:program', _.map(program, card => _.values(card)))
       console.info('client:id', socket.id)
 
       // TODO Update & check game.getRobot(...).cards & .program
