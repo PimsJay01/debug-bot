@@ -5,22 +5,15 @@ var _ = require('underscore')
 var moment = require('moment');
 var io = require('socket.io').listen(server)
 
+var config = require('./config')
+
 // Models
 var Robot = require('./models/robot')
 var Card = require('./models/card')
 var Box = require('./models/box')
 var Game = require('./models/game')
 
-const maxHealth = 5
-const initalPositions = [
-    {x: 0, y: 1},
-    {x: 0, y: 3},
-    {x: 0, y: 5},
-    {x: 0, y: 7}
-]
-
-var game = new Game('board01')
-console.log(game.board)
+var game = new Game()
 
 var cards = []
 
@@ -58,7 +51,7 @@ io.sockets.on('connection', socket => {
       console.info('client:name', name)
       console.info('client:id', socket.id)
 
-      let robot = new Robot(socket.id, name, initalPositions[game.robots.length], maxHealth)
+      let robot = new Robot(socket.id, name)
       if(game.addRobot(robot)) {
           console.info('server:init')
           io.sockets.emit('server:init', { game, robot })
@@ -73,7 +66,7 @@ io.sockets.on('connection', socket => {
       if(game.isRobotsReady()) {
           console.info('everybody is ready')
 
-          game.deadline = moment().add(120, 'seconds')
+          game.deadline = moment().add(config.gameTime, 'seconds')
           // TODO Start counter
 
           _.each(game.robots, robot => {
@@ -88,7 +81,9 @@ io.sockets.on('connection', socket => {
   })
 
   socket.on('client:program', (program) => {
-      console.info('client:program', program)
+      console.info('client:program', _.map(program, card => {
+          return _.values(card)
+      }))
       console.info('client:id', socket.id)
 
       // TODO Update & check game.getRobot(...).cards & .program

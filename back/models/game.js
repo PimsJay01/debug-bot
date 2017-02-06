@@ -1,16 +1,26 @@
 var _ = require('underscore')
 
+var config = require('./../config')
+
 var Box = require('./box')
 
+const initalPositions = [
+    {x: 0, y: 1},
+    {x: 0, y: 3},
+    {x: 0, y: 5},
+    {x: 0, y: 7}
+]
+
 module.exports = class Game {
-    constructor(boardName) {
+    constructor() {
         this.robots = []
-        this.board = initBoard(boardName)
+        this.board = initBoard()
 
         this['maxPlayers'] = 2
     }
     addRobot(robot) {
         if(this.robots.length < this.maxPlayers) {
+            robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
         }
         return this.robots.length == this.maxPlayers
@@ -35,8 +45,8 @@ module.exports = class Game {
     }
 }
 
-function initBoard(boardName) {
-    let board = require("../boards/" + boardName)
+function initBoard() {
+    let board = require("../boards/" + config.boardId)
     let height = _.size(board.data) / 3
     let width = _.size(board.data[0])
     let temp = []

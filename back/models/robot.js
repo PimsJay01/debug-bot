@@ -1,9 +1,11 @@
+var config = require('./../config')
+
 module.exports = class Robot {
-    constructor(id, name, position, health) {
+    constructor(id, name, health) {
         this.id = id
         this.name = name
-        this.position = position
-        this.health = health
+        this.position = { x: 0, y: 0 }
+        this.health = config.maxHealth
         this.cards = []
         this.program = []
         this.ready = false
