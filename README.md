@@ -16,14 +16,7 @@ node server.js
 
 ## Frontend : debug-bot/front
 
-### Download dependencies with npm
-cd front
-npm install
-
-### Start front
-npm run dev
-
-The game is running on http://localhsot:3000
+More information : https://github.com/PimsJay01/debug-bot/tree/master/front
 
 
 
