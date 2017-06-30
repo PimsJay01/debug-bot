@@ -15,15 +15,21 @@ module.exports = class Game {
     constructor() {
         this.robots = []
         this.board = initBoard()
+        this.started = false
 
         this['maxPlayers'] = 2
+    }
+    isStarted() {
+        return this.started
     }
     addRobot(robot) {
         if(this.robots.length < this.maxPlayers) {
             robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
+            this.started = this.robots.length >= this.maxPlayers
+            return true
         }
-        return this.robots.length == this.maxPlayers
+        return false
     }
     removeRobot(id) {
         this.robots = _.filter(this.robots, robot => robot.id != id)

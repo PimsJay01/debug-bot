@@ -19,6 +19,7 @@ export default class extends Phaser.State {
             align: "center"
         })//.anchor.setTo(0.5, 0)
 
+        // TODO Create input for player's name
         this.emitName('Player')
     }
 

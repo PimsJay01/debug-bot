@@ -28,6 +28,8 @@ const rl = readline.createInterface({
 // reset the global datastructures, put the server in initial state
 function reset(){
     console.log('Server reset')
+
+    // TODO Reset game
 }
 
 // list of commands recognised by the server
@@ -53,8 +55,16 @@ io.sockets.on('connection', socket => {
 
       let robot = new Robot(socket.id, name)
       if(game.addRobot(robot)) {
-          console.info('server:init')
-          io.sockets.emit('server:init', { game, robot })
+          if(game.isStarted()) {
+              console.info('server:init')
+              _.each(game.robots, robot => {
+                  io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+              })
+          }
+      }
+      else {
+          // TODO send a message to the unlucky player and manage it
+          console.info('go fuck yourself', socket.id);
       }
   })
 

@@ -25,6 +25,7 @@ export default class extends Phaser.State {
             text.index = index
             text.inputEnabled = true
             text.events.onInputUp.add(this.cardClick, this)
+
             this.cards.push(text)
         }, this)
 
@@ -34,8 +35,13 @@ export default class extends Phaser.State {
             text.index = index
             text.inputEnabled = true
             text.events.onInputUp.add(this.programClick, this)
+
             this.program.push(text)
         }, this)
+
+        let btnReady = this.createBtnReady(10, 340)
+        btnReady.inputEnabled = true
+        btnReady.events.onInputUp.add(this.btnReadyClick, this)
 
         this.refreshTexts()
     }
@@ -68,6 +74,14 @@ export default class extends Phaser.State {
 
     createText(posX, posY) {
         return game.add.text(posX, posY, "", {
+            font: "20px Arial",
+            fill: "#ffffff",
+            align: "center"
+        })
+    }
+
+    createBtnReady(posX, posY) {
+        return game.add.text(posX, posY, "Ready !", {
             font: "20px Arial",
             fill: "#ffffff",
             align: "center"
@@ -132,6 +146,18 @@ export default class extends Phaser.State {
             game.robot.cards.push(card)
             this.emitProgram()
         }
+    }
+
+    btnReadyClick() {
+        window.socket.emit('client:compiled')
+        console.info('client:compiled')
+
+        _.each(this.cards, card => {
+            card.inputEnabled = false
+        })
+        _.each(this.program, ligne => {
+            ligne.inputEnabled = false
+        })
     }
 
     emitProgram() {
