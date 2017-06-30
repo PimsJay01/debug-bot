@@ -149,8 +149,8 @@ export default class extends Phaser.State {
     }
 
     btnReadyClick() {
-        window.socket.emit('client:compiled')
-        console.info('client:compiled')
+        window.socket.emit('client:compile')
+        console.info('client:compile')
 
         _.each(this.cards, card => {
             card.inputEnabled = false

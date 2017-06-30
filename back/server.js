@@ -77,7 +77,8 @@ io.sockets.on('connection', socket => {
           console.info('everybody is ready')
 
           game.deadline = moment().add(config.gameTime, 'seconds')
-          // TODO Start counter
+          // TODO Fix setTimeout issue
+        //   game.timeoutId = setTimeout(runProgram, 10000)
 
           _.each(game.robots, robot => {
               // TODO get 9 cards randomly from deck game.cards[]
@@ -97,10 +98,23 @@ io.sockets.on('connection', socket => {
       let robot = game.getRobot(socket.id)
       robot.program = _.intersection(robot.cards, program)
       console.info('client:program(real)', program)
-
-      // TODO Update & check game.getRobot(...).cards & .program
   })
 
+  socket.on('client:compile', () => {
+      console.info('client:compile')
+      console.info('client:id', socket.id)
+
+      game.getRobot(socket.id).compiled = true
+      if(game.areRobotsCompiled()) {
+          runProgram()
+      }
+  })
+
+  runProgram = function() {
+      console.info('server:runProgram')
+
+    //   clearTimeout(game.timeoutId)
+  }
 
   // When client disconnect...
   socket.on('disconnect', () => {

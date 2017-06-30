@@ -49,6 +49,9 @@ module.exports = class Game {
         }
         return false;
     }
+    areRobotsCompiled() {
+        return _.every(this.robots, robot => robot.compiled)
+    }
 }
 
 function initBoard() {
