@@ -39,9 +39,9 @@ export default class extends Phaser.State {
             this.program.push(text)
         }, this)
 
-        let btnReady = this.createBtnReady(10, 340)
-        btnReady.inputEnabled = true
-        btnReady.events.onInputUp.add(this.btnReadyClick, this)
+        this.btnReady = this.createBtnReady(10, 340)
+        this.btnReady.inputEnabled = false
+        this.btnReady.events.onInputUp.add(this.btnReadyClick, this)
 
         this.refreshTexts()
     }
@@ -135,6 +135,8 @@ export default class extends Phaser.State {
             let card = game.robot.cards[text.index]
             game.robot.cards.splice(text.index, 1);
             game.robot.program.push(card)
+            if( game.robot.program.length == 5 ) { this.btnReady.inputEnabled = true }
+            else { this.btnReady.inputEnabled = false }
             this.emitProgram()
         }
     }
