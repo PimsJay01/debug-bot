@@ -91,8 +91,12 @@ io.sockets.on('connection', socket => {
   })
 
   socket.on('client:program', (program) => {
-      console.info('client:program', _.map(program, card => _.values(card)))
+      console.info('client:program', _.map(program, line => _.values(line)))
       console.info('client:id', socket.id)
+
+      let robot = game.getRobot(socket.id)
+      robot.program = _.intersection(robot.cards, program)
+      console.info('client:program(real)', program)
 
       // TODO Update & check game.getRobot(...).cards & .program
   })
