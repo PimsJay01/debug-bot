@@ -12,7 +12,6 @@ var Robot = require('./models/robot')
 var Card = require('./models/card')
 var Box = require('./models/box')
 var Game = require('./models/game')
-var Command = require('./models/command')
 
 var game = new Game()
 
@@ -69,7 +68,7 @@ io.sockets.on('connection', socket => {
       if(game.addRobot(robot)) {
           if(game.isStarted()) {
             console.log('starting game...');
-            
+
             game.deadline = moment().add(config.gameTime, 'seconds')
             game.distributeCards();
 
@@ -137,24 +136,7 @@ io.sockets.on('connection', socket => {
   runProgram = function() {
       console.info('server:runProgram', game.getProgramsSorted())
 
-      let programs = game.getProgramsSorted()
-      let commands = []
-      let index = 0
-      _.each(programs, program => {
-        switch (program.line.type) {
-          case 5:
-            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
-            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
-            break;
-          case 6:
-            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
-            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
-            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
-          default:
-            commands.push(new Command(program.robotId, program.line.id, program.line.type))
-
-        }
-      })
+      let commands = game.resolveTurn()
 
       console.info('server:runProgram', commands)
       _.each(game.robots, robot => {
