@@ -90,6 +90,8 @@ export default class {
         this.map.scale = new Phaser.Point(factor, factor)
         this.map.top = (game.height - this.map.height) / 2.0
         this.map.left = 0
+
+        this.animationDone = true;
     }
 
     getPositionXOnMap(x, y) {
@@ -100,7 +102,16 @@ export default class {
         return (this.height / 3.0 * y) - (this.height / 3.0 * x) + 1;
     }
 
+    isAnimationDone() {
+        return this.animationDone;
+    }
+
+    focus(robotId) {
+        this.animationDone = false;
+    }
+
     render() {
+        this.timer
         _.each(game.datas.robots, (robot, indexRobot) => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
                 this.robots[indexRobot][indexImage].visible = false

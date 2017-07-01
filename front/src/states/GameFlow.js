@@ -25,11 +25,24 @@ export default class extends Phaser.State {
         })//.anchor.setTo(0.5, 0)
 
         this.indexFlow = 0;
-        this.stepover()
     }
 
     render() {
-        this.map.render()
+        // if(this.map.isAnimationDone()) {
+        //     if(game.flow.length > indexFlow) {
+        //         this.map.focus(game.flow[this.indexFlow].robotId, () => {
+        //             game.robot.position.x++
+        //         })
+        //         this.indexFlow++;
+        //         this.map.render()
+        //     }
+        //     else {
+        //         this.stepover()
+        //     }
+        // }
+        // else {
+            this.map.render()
+        // }
     }
 
     stepover() {
