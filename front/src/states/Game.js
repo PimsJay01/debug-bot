@@ -82,7 +82,7 @@ export default class extends Phaser.State {
         console.info(game.robot.color);
         return game.add.text(posX, posY, '', {
             font: '20px Arial',
-            fill: game.robot.color.replace("0x", "#"),
+            fill: '' + game.robot.fill,
             align: 'center'
         })
     }
@@ -90,7 +90,7 @@ export default class extends Phaser.State {
     createBtnReady(posX, posY) {
         return game.add.text(posX, posY, '', {
             font: '20px Arial',
-            fill: game.robot.color.replace("0x", "#"),
+            fill: '' + game.robot.fill,
             align: 'center'
         })
     }

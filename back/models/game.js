@@ -42,7 +42,8 @@ const initalPositions = [
     {x: 0, y: 7}
 ]
 
-const initalColors = ['0xFF0000', '0x00FF00', '0x0000FF', '0xFFFFFF']
+const initalColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFFFF]
+const initalFills = ['#ff0000', '#00ff00', '#0000ff', '#ffffff']
 
 module.exports = class Game {
     constructor() {
@@ -58,6 +59,7 @@ module.exports = class Game {
     addRobot(robot) {
         if(this.robots.length < this.maxPlayers) {
             robot.color = initalColors[this.robots.length]
+            robot.fill = initalFills[this.robots.length]
             robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
             this.started = this.robots.length >= this.maxPlayers
