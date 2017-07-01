@@ -42,6 +42,9 @@ const initalPositions = [
     {x: 0, y: 7}
 ]
 
+const initalColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFFFF]
+const initalFills = ['#ff0000', '#00ff00', '#0000ff', '#ffffff']
+
 module.exports = class Game {
     constructor() {
         this.robots = [];
@@ -55,6 +58,8 @@ module.exports = class Game {
     }
     addRobot(robot) {
         if(this.robots.length < this.maxPlayers) {
+            robot.color = initalColors[this.robots.length]
+            robot.fill = initalFills[this.robots.length]
             robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
             this.started = this.robots.length >= this.maxPlayers
@@ -83,7 +88,7 @@ module.exports = class Game {
     distributeCards(){
         _.each(this.robots, robot => {
             while (robot.cards.length < config.robotMaxCards){
-                var cardSelected = this.deck[_.random(this.deck.length)];
+                var cardSelected = this.deck[_.random(this.deck.length-1)];
                 robot.cards.push(cardSelected);
                 this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
             }

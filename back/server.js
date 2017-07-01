@@ -109,6 +109,20 @@ io.sockets.on('connection', socket => {
       }
   })
 
+  socket.on('client:stepover', () => {
+    console.info('cient:stepover')
+
+    game.distributeCards();
+
+    _.each(game.robots, robot => {
+        robot.program = []
+        robot.compiled = false
+        console.info('server:cards', robot.id)
+        io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+    })
+
+  })
+
   socket.on('client:gameover', () => {
     console.info('client:gameover')
 
