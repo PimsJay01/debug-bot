@@ -11,7 +11,6 @@ module.exports = class Robot {
         this.health = config.maxHealth
         this.cards = []
         this.program = []
-        this.ready = false
         this.compiled = false
         this.animation = 0
     }

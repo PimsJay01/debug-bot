@@ -51,18 +51,19 @@ module.exports = class Game {
         this.board = initBoard();
         this.started = false;
         this.deck = buildCardDeck();
-        this['maxPlayers'] = 2;
+
+        this.currentTurn = 0;
     }
     isStarted() {
         return this.started
     }
     addRobot(robot) {
-        if(this.robots.length < this.maxPlayers) {
+        if(this.robots.length < config.maxPlayers) {
             robot.color = initalColors[this.robots.length]
             robot.fill = initalFills[this.robots.length]
             robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
-            this.started = this.robots.length >= this.maxPlayers
+            this.started = this.robots.length >= config.maxPlayers
             return true
         }
         return false
@@ -80,7 +81,7 @@ module.exports = class Game {
         }
     }
     isRobotsReady(){
-        if(this.robots.length == this['maxPlayers']) {
+        if(this.robots.length == config.maxPlayers) {
             return _.every(this.robots, robot => robot.ready)
         }
         return false;
@@ -88,7 +89,7 @@ module.exports = class Game {
     distributeCards(){
         _.each(this.robots, robot => {
             while (robot.cards.length < config.robotMaxCards){
-                var cardSelected = this.deck[_.random(this.deck.length)];
+                var cardSelected = this.deck[_.random(this.deck.length-1)];
                 robot.cards.push(cardSelected);
                 this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
             }

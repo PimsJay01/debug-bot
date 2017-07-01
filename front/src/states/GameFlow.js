@@ -25,6 +25,44 @@ export default class extends Phaser.State {
         })//.anchor.setTo(0.5, 0)
 
         this.indexFlow = 0;
+        this.interval = setInterval(() => {
+            if(game.flow.length > this.indexFlow) {
+                let command = game.flow[this.indexFlow]
+                console.info('command', command)
+                let robot = _.find(game.datas.robots, robot => robot.id == command.robotId)
+                console.info('robot', robot)
+                switch(command.action) {
+                    case 1 :
+                        robot.position.y--;
+                        break;
+                    case 2 :
+                        robot.position.y++;
+                        break;
+                    case 3 :
+                        robot.position.x--;
+                        break;
+                    case 4 :
+                        robot.position.x++;
+                        break;
+                    case 5 :
+                        robot.direction = (robot.direction + 1) % 4;
+                        break;
+                    case 6 :
+                        robot.direction = (robot.direction - 1) % 4;
+                        break;
+                    case 7 :
+                        robot.direction = (robot.direction + 2) % 4;
+                        break;
+                }
+                this.indexFlow++;
+            }
+            else {
+                console.log('interval cleared')
+                clearInterval(this.interval)
+
+                this.stepover()
+            }
+        }, 1000)
     }
 
     render() {

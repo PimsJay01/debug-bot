@@ -28,7 +28,7 @@ const Type = {
 }
 
 // Loading stdin read
-const readline = require('readline')
+const readline = require('readline');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -64,11 +64,22 @@ io.sockets.on('connection', socket => {
       console.info('client:id', socket.id)
 
       let robot = new Robot(socket.id, name)
+
+
       if(game.addRobot(robot)) {
           if(game.isStarted()) {
-              console.info('server:init')
+            console.log('starting game...');
+            
+            game.deadline = moment().add(config.gameTime, 'seconds')
+            game.distributeCards();
+
+            _.each(game.robots, robot => {
+                console.info('server:cards', robot.id)
+                io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+            })
+          } else {
               _.each(game.robots, robot => {
-                  io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+                  io.sockets.sockets[robot.id].emit('server:game:pplupd', { game, robot })
               })
           }
       }
@@ -78,26 +89,6 @@ io.sockets.on('connection', socket => {
       }
   })
 
-  socket.on('client:ready', () => {
-      console.info('client:ready')
-      console.info('client:id', socket.id)
-
-      game.setRobotReady(socket.id)
-      if(game.isRobotsReady()) {
-          console.info('everybody is ready')
-
-          game.deadline = moment().add(config.gameTime, 'seconds')
-          // TODO Fix setTimeout issue
-        //   game.timeoutId = setTimeout(runProgram, 10000)
-
-          game.distributeCards();
-
-          _.each(game.robots, robot => {
-              console.info('server:cards', robot.id)
-              io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
-          })
-      }
-  })
 
   socket.on('client:program', (program) => {
       console.info('client:program', _.map(program, line => _.values(line)))
@@ -114,34 +105,34 @@ io.sockets.on('connection', socket => {
 
       game.getRobot(socket.id).compiled = true
       if(game.areRobotsCompiled()) {
+          game.currentTurn ++
+          console.info('currentTurn : ', game.currentTurn)
           runProgram()
       }
   })
 
-  socket.on('client:gameover', () => {
-    console.info('client:gameover')
-
-    let robots = []
-    _.each(game.robots, robot => {
-      robots.push(new Robot(robot.id, robot.name))
-    })
-
-    game = new Game()
-
-    _.each(robots, robot => {
-      game.addRobot(robot)
-    })
-
-    if(game.isStarted()) {
-        console.info('server:init')
-        _.each(robots, robot => {
-            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+  socket.on('client:stepover', () => {
+      console.info('cient:stepover')
+      if (isGameOver()) {
+        let youwon = true
+        _.each(game.robots, robot => {
+            io.sockets.sockets[robot.id].emit('server:gameover', youwon)
         })
-    } else {
-      console.info('unfortunately, we lost a player...')
+      } else {
+        game.distributeCards();
+        _.each(game.robots, robot => {
+            robot.program = []
+            robot.compiled = false
+            console.info('server:cards', robot.id)
+            io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+        })
     }
 
   })
+
+  isGameOver = function() {
+    return game.currentTurn >= 2;
+  }
 
   runProgram = function() {
       console.info('server:runProgram', game.getProgramsSorted())
@@ -175,8 +166,11 @@ io.sockets.on('connection', socket => {
 
   // When client disconnect...
   socket.on('disconnect', () => {
-      console.info('client:disconnect', socket.id)
-      game.removeRobot(socket.id)
+        console.info('client:disconnect', socket.id)
+        game.removeRobot(socket.id)
+        _.each(game.robots, robot => {
+            io.sockets.sockets[robot.id].emit('server:game:pplupd', { game, robot })
+        })
   })
 })
 

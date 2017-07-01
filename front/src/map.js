@@ -79,6 +79,7 @@ export default class {
                 let image = game.add.image(0, 0, 'robot1' + direction)
                 image.visible = false
 
+// q               game.physics.enable(image, Phaser.Physics.ARCADE);
                 this.map.add(image)
                 robot.push(image)
             })
@@ -102,16 +103,16 @@ export default class {
         return (this.height / 3.0 * y) - (this.height / 3.0 * x) + 1;
     }
 
-    isAnimationDone() {
-        return this.animationDone;
-    }
-
-    focus(robotId) {
-        this.animationDone = false;
-    }
+    // isAnimationDone() {
+    //     return this.animationDone;
+    // }
+    //
+    // focus(robotId) {
+    //     let indexRobot = _.indexOf(this.robots, _.filter(this.robots, robot => robot.id = robotId))
+    //
+    // }
 
     render() {
-        this.timer
         _.each(game.datas.robots, (robot, indexRobot) => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
                 this.robots[indexRobot][indexImage].visible = false
