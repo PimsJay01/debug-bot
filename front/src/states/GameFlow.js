@@ -36,13 +36,13 @@ export default class extends Phaser.State {
                         robot.position.y--;
                         break;
                     case 1 :
-                        robot.position.y++;
+                        robot.position.x++;
                         break;
                     case 2 :
-                        robot.position.x--;
+                        robot.position.y++;
                         break;
                     case 3 :
-                        robot.position.x++;
+                        robot.position.x--;
                         break;
                     case 4 :
                         robot.direction = (robot.direction + 1) % 4;

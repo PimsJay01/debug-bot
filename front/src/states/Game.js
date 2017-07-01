@@ -117,7 +117,7 @@ export default class extends Phaser.State {
     }
 
     isTime() {
-        return this.getTimeDiff().asMinutes() > 0
+        return true;//this.getTimeDiff().asMinutes() > 0
     }
 
     getCardTypeName(card) {
