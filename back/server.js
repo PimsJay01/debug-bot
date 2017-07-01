@@ -96,8 +96,8 @@ io.sockets.on('connection', socket => {
       console.info('client:id', socket.id)
 
       let robot = game.getRobot(socket.id)
-      robot.program = _.intersection(robot.cards, program)
-      console.info('client:program(real)', program)
+      robot.program = program
+      console.info('client:program(real)', robot.program)
   })
 
   socket.on('client:compile', () => {
@@ -111,7 +111,7 @@ io.sockets.on('connection', socket => {
   })
 
   runProgram = function() {
-      console.info('server:runProgram')
+      console.info('server:runProgram', game.getProgramsSorted())
 
     //   clearTimeout(game.timeoutId)
   }

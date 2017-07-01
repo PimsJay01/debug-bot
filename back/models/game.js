@@ -52,6 +52,25 @@ module.exports = class Game {
     areRobotsCompiled() {
         return _.every(this.robots, robot => robot.compiled)
     }
+
+    // Sorted programs by priorities for each tour
+    getProgramsSorted() {
+      let sortedPrograms = []
+      _.each(_.range(5), index => {
+        let temp = []
+        _.each(this.robots, robot => {
+          temp.push({
+            'id' : robot.id,
+            'program' : robot.program[index]
+          })
+        })
+        console.info('DEBUG : ', temp)
+        sortedPrograms.push(_.sortBy(temp, step => {
+          return -step.program.priority
+        }))
+      })
+      return _.flatten(sortedPrograms)
+    }
 }
 
 function initBoard() {
