@@ -95,60 +95,113 @@ module.exports = class Game {
       let programs = this.getProgramsSorted()
       let commands = []
       let index = 0
+      let nbStep = 0
       console.info("RESOLVE TURN : ", this.currentTurn);
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
         switch (program.line.type) {
           case this.types.CardType.U_TURN:
-            //console.info("server:game: before uturn : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             robot.uTurn()
-            //console.info("server:game: after uturn : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.U_TURN))
             break
           case this.types.CardType.ROTATE_LEFT:
-            //console.info("server:game: before turn left : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             robot.turnLeft()
-            //console.info("server:game: after turn left : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_LEFT))
             break
           case this.types.CardType.ROTATE_RIGHT:
-            //console.info("server:game: before turn right : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             robot.turnRight()
-            //console.info("server:game: after turn right : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_RIGHT))
             break
           case this.types.CardType.BACK_UP:
-            //console.info("server:game: before backup : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            robot.backUp()
-            //console.info("server:game: after backup : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
+            if (this.tryBackup(robot) > 0) {
+              robot.backUp()
+              commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
+            }
             break
           case this.types.CardType.MOVE_1:
-            //console.info("server:game: before move_1 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            robot.moveXSteps(1)
-            //console.info("server:game: after move_1 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            nbStep = Math.min(this.tryMove(robot), 1)
+            console.info("de combien t'avance ", nbStep)
+            robot.moveXSteps(nbStep)
+            _.each(_.range(nbStep), index => {
+                console.info(index, "/", nbStep)
+                commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            })
             break
           case this.types.CardType.MOVE_2:
-            //console.info("server:game: before move_2 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            robot.moveXSteps(2)
-            //console.info("server:game: after move_2 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            nbStep = Math.min(this.tryMove(robot), 2)
+            console.info("de combien t'avance ", nbStep)
+            robot.moveXSteps(nbStep)
+            _.each(_.range(nbStep), index => {
+                console.info(index, "/", nbStep)
+                commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            })
             break
           case this.types.CardType.MOVE_3:
-            //console.info("server:game: before move_3 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            robot.moveXSteps(3)
-            //console.info("server:game: after move_3 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            nbStep = Math.min(this.tryMove(robot), 3)
+            console.info("de combien t'avance ", nbStep)
+            robot.moveXSteps(nbStep)
+            _.each(_.range(nbStep), index => {
+                console.info(index, "/", nbStep)
+                commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            })
             break
           default:
             break
         }
       })
       return commands;
+    }
+
+    boxFree(pos) {
+      let isFree = true
+      _.each(this.robots, robot => {
+          if (pos.x == robot.position.x && pos.y == robot.position.y) {
+            isFree = false
+          }
+      })
+      return isFree
+    }
+
+    tryBackup(robot) {
+      let r = robot
+      r.direction = robot.getReverseDirection()
+      return this.tryMove(r)
+    }
+
+    tryMove(robot) {
+        var pos = robot.position
+        var nbStep = 0
+        _.each(_.range(2), step => {
+          console.info("position : ", pos)
+          console.info("nbStep : ", nbStep)
+          switch(robot.direction) {
+            case this.types.MovementType.NORTH:
+              if (this.boxFree({x:pos.x, y:pos.y-1})) {
+                nbStep ++
+                pos = {x:pos.x, y:pos.y-1}
+              }
+              break
+            case this.types.MovementType.EAST:
+              if (this.boxFree({x:pos.x+1, y:pos.y})) {
+                nbStep ++
+                pos = {x:pos.x+1, y:pos.y}
+              }
+              break
+            case this.types.MovementType.SOUTH:
+              if (this.boxFree({x:pos.x, y:pos.y+1})) {
+                nbStep ++
+                pos = {x:pos.x, y:pos.y+1}
+              }
+              break
+            case this.types.MovementType.WEST:
+              if (this.boxFree({x:pos.x-1, y:pos.y})) {
+                nbStep ++
+                pos = {x:pos.x-1, y:pos.y}
+              }
+              break
+          }
+        })
+        return nbStep
     }
 
     getRobotById(robotId) {
