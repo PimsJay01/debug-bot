@@ -125,7 +125,13 @@ window.emitName = function() {
     if (pseudo.length == 0){
         pseudo = "an idiot that did not provide a pseudo";
     }
-    window.socket.emit('client:name', pseudo);
+    var avatarSelected;
+    for (var i = 0; i < avatarList.length; i++) {
+        if (avatarList[i].selected == true) {
+            avatarSelected = i;
+        }
+    }
+    window.socket.emit('client:infos', {name:pseudo,avatarId:avatarSelected});
     document.getElementById('welcome').style.display = "none";
     document.getElementById('game').style.display = "flex";
 }
