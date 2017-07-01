@@ -9,5 +9,6 @@ module.exports = class Robot {
         this.cards = []
         this.program = []
         this.ready = false
+        this.compiled = false
     }
 }

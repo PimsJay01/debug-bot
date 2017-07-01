@@ -87,7 +87,10 @@ module.exports = class Game {
                 robot.cards.push(cardSelected);
                 this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
             }
-        });
+        })
+    }
+    areRobotsCompiled() {
+        return _.every(this.robots, robot => robot.compiled)
     }
 }
 
