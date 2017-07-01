@@ -10,6 +10,7 @@ export default class extends Phaser.State {
 
     preload() {
         this.stage.backgroundColor = '#000000'
+        this.stage.disableVisibilityChange = true
     }
 
     create() {

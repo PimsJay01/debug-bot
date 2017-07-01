@@ -11,6 +11,7 @@ export default class extends Phaser.State {
 
     preload() {
         this.stage.backgroundColor = '#000000'
+        this.stage.disableVisibilityChange = true
         this.map = new Map()
 
         game.load.image('readyBtn', res.images.readyBtn);

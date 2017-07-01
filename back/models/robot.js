@@ -12,5 +12,6 @@ module.exports = class Robot {
         this.cards = []
         this.program = []
         this.compiled = false
+        this.animation = 0
     }
 }

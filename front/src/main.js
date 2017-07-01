@@ -111,10 +111,11 @@ window.socket.on('server:gameover', (youwon) => {
     window.game.youwon = youwon
     window.game.state.start('GameOver')
 })
-window.socket.on('server:runProgram', (gameFlow) => {
-  console.info('server:runProgram')
 
-  window.game.gameflow = gameFlow
+window.socket.on('server:runProgram', (flow) => {
+  console.info('server:runProgram', { flow })
+
+  window.game.flow = flow
   window.game.state.start('GameFlow')
 
 })
