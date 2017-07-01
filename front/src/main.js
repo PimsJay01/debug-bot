@@ -31,19 +31,18 @@ window.game = new Game()
 
 window.socket = io(`http://localhost:7777`);
 
-window.socket.on('server:init', ({ game, robot }) => {
-    console.info('server:init', { game, robot })
+window.socket.on('server:game:init', ({ game, robot }) => {
+    console.info('server:game:init', { game, robot })
     window.game.datas = game
     window.game.robot = robot
     window.game.state.start('Ready')
 })
 
-window.socket.on('server:game:newppl', ({ game, robot }) => {
-    console.info('server:game:newppl', { game, robot })
+window.socket.on('server:game:pplupd', ({ game, robot }) => {
+    //console.info('server:game:pplupd', { game, robot })
     window.game.datas = game
     window.game.robot = robot
     document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
-    //document.getElementById('playerAmount').innerHTML = "Players: ";
     //errasing ppl list (usefull in case a player left)
     document.getElementById("inGamePlayerList").innerHTML = "";
 
@@ -59,6 +58,7 @@ window.socket.on('server:cards', ({ game, robot }) => {
     window.game.datas = game
     window.game.robot = robot
     window.game.state.start('Game')
+    document.getElementById('hoverPlayerList').style.display = "none";
 })
 
 window.socket.on('server:gameover', () => {
