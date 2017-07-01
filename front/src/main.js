@@ -26,6 +26,55 @@ class Game extends Phaser.Game {
   }
 }
 
+
+var avatarList = [
+    {
+        selected : false,
+        src : "./assets/images/avatar_fluffy.png"
+    },
+    {
+        selected : false,
+        src : "./assets/images/avatar_lavander.png"
+    },
+    {
+        selected : false,
+        src : "./assets/images/avatar_silhouette.png"
+    },
+    {
+        selected : false,
+        src : "./assets/images/avatar_skurts.png"
+    }
+]
+
+window.loadHTMLUI = function(){
+    for (var i = 0; i < avatarList.length; i++) {
+        var li = document.createElement('li');
+        var img = document.createElement('img');
+        img.id = i;
+        img.src = avatarList[i].src;
+        img.style = "height: 60px; width:60px; border-radius: 50%; margin:5px;";
+        img.onclick = window.robotSelected;
+        li.appendChild(img);
+        document.getElementById("avatarList").appendChild(li);
+    }
+    var randomSelect = Math.floor(Math.random() * avatarList.length);
+
+    avatarList[randomSelect].selected = true;
+    document.getElementById(randomSelect).className = "selected";
+}
+
+window.robotSelected = function(event){
+    var id = event.target.id;
+    for (var i = 0; i < avatarList.length; i++) {
+        if (avatarList[i].selected == true) {
+            avatarList[i].selected = false;
+            document.getElementById(i).className = "";
+        }
+        avatarList[id].selected = true;
+        document.getElementById(id).className = "selected";
+    }
+}
+
 window.game = new Game()
 
 window.socket = io(`http://localhost:7777`);
@@ -42,6 +91,8 @@ window.socket.on('server:game:pplupd', ({ game, robot }) => {
     for (var i = 0; i < game.robots.length; i++) {
         var li = document.createElement('li');
         li.innerHTML = game.robots[i].name;
+        li.style.border = '2px solid ' + game.robots[i].fill;
+        li.style.backgroundColor = 'rgba(' + parseInt(game.robots[i].fill.substring(1,3), 16) + ',' + parseInt(game.robots[i].fill.substring(3,5), 16) +',' + parseInt(game.robots[i].fill.substring(5,7), 16) + ', 0.6)';
         document.getElementById("inGamePlayerList").appendChild(li);
     }
     window.game.state.start('Waiting')
@@ -74,7 +125,13 @@ window.emitName = function() {
     if (pseudo.length == 0){
         pseudo = "an idiot that did not provide a pseudo";
     }
-    window.socket.emit('client:name', pseudo);
+    var avatarSelected;
+    for (var i = 0; i < avatarList.length; i++) {
+        if (avatarList[i].selected == true) {
+            avatarSelected = i;
+        }
+    }
+    window.socket.emit('client:infos', {name:pseudo,avatarId:avatarSelected});
     document.getElementById('welcome').style.display = "none";
     document.getElementById('game').style.display = "flex";
 }

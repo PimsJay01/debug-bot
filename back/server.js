@@ -58,11 +58,9 @@ rl.on('line', input => {
 io.sockets.on('connection', socket => {
   console.info('client:connect', socket.id)
 
-  socket.on('client:name', name => {
-      console.info('client:name', name)
-      console.info('client:id', socket.id)
+  socket.on('client:infos', infos => {
 
-      let robot = new Robot(socket.id, name)
+      let robot = new Robot(socket.id, infos.name, infos.avatarId)
 
 
       if(game.addRobot(robot)) {
