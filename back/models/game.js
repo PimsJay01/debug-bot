@@ -245,13 +245,13 @@ function getBoxWalls(line1, line2, line3) {
     // north walls
     if(line1.includes("----"))
         walls[0] = true
-    // north walls
+    // east walls
     if((line1.charAt(5) == "|") && (line2.charAt(5) == "|") && (line3.charAt(5) == "|"))
         walls[1] = true
     // south walls
     if(line3.includes("----"))
         walls[2] = true
-    // north walls
+    // west walls
     if((line1.charAt(0) == "|") && (line2.charAt(0) == "|") && (line3.charAt(0) == "|"))
         walls[3] = true
     return walls;

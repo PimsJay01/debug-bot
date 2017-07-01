@@ -5,6 +5,7 @@ import Phaser from 'phaser'
 import WelcomeState from './states/Welcome'
 import ReadyState from './states/Ready'
 import GameState from './states/Game'
+import GameFlowState from './states/GameFlow'
 
 import config from './config'
 
@@ -22,6 +23,7 @@ class Game extends Phaser.Game {
     this.state.add('Welcome', WelcomeState, false)
     this.state.add('Ready', ReadyState, false)
     this.state.add('Game', GameState, false)
+    this.state.add('GameFlow', GameFlowState, false)
 
     this.state.start('Welcome')
   }
@@ -49,4 +51,12 @@ window.socket.on('server:gameover', () => {
     console.info('server:gameover')
 
     window.game.state.start('Welcome')
+})
+
+window.socket.on('server:runProgram', (gameFlow) => {
+  console.info('server:runProgram')
+
+  window.game.gameflow = gameFlow
+  window.game.state.start('GameFlow')
+
 })
