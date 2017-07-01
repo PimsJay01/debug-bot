@@ -95,37 +95,51 @@ module.exports = class Game {
       let programs = this.getProgramsSorted()
       let commands = []
       let index = 0
-
+      console.info("RESOLVE TURN : ", this.currentTurn);
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
         switch (program.line.type) {
           case this.types.CardType.U_TURN:
-            //robot.uTurn()
+            //console.info("server:game: before uturn : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.uTurn()
+            //console.info("server:game: after uturn : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.U_TURN))
             break
           case this.types.CardType.ROTATE_LEFT:
-            //robot.turnLeft()
+            //console.info("server:game: before turn left : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.turnLeft()
+            //console.info("server:game: after turn left : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_LEFT))
             break
           case this.types.CardType.ROTATE_RIGHT:
-            //robot.turnRight()
+            //console.info("server:game: before turn right : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.turnRight()
+            //console.info("server:game: after turn right : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_RIGHT))
             break
           case this.types.CardType.BACK_UP:
-            //robot.backUp()
+            //console.info("server:game: before backup : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.backUp()
+            //console.info("server:game: after backup : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
             break
           case this.types.CardType.MOVE_1:
-            //robot.moveXSteps(1)
+            //console.info("server:game: before move_1 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.moveXSteps(1)
+            //console.info("server:game: after move_1 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             break
           case this.types.CardType.MOVE_2:
-            //robot.moveXSteps(2)
+            //console.info("server:game: before move_2 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.moveXSteps(2)
+            //console.info("server:game: after move_2 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             break
           case this.types.CardType.MOVE_3:
-            //robot.moveXSteps(3)
+            //console.info("server:game: before move_3 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+            robot.moveXSteps(3)
+            //console.info("server:game: after move_3 : ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
@@ -133,14 +147,9 @@ module.exports = class Game {
           default:
             break
         }
-        console.info(robot.position, robot.direction)
-
       })
-
-      console.info('Commands to be send to the client : ', commands)
       return commands;
     }
-
 
     getRobotById(robotId) {
       let res

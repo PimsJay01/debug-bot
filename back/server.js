@@ -101,8 +101,10 @@ io.sockets.on('connection', socket => {
       }
   })
 
-  socket.on('client:stepover', () => {
+  socket.on('client:stepover', (newRobot) => {
       console.info('cient:stepover')
+      let robot = _.find(game.robots, robot => robot.id == newRobot.id)
+      robot.position = newRobot.position
       if (isGameOver()) {
         let youwon = true
         _.each(game.robots, robot => {
@@ -114,6 +116,7 @@ io.sockets.on('connection', socket => {
             robot.program = []
             robot.compiled = false
             console.info('server:cards', robot.id)
+            console.info("server:cards: ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
         })
     }

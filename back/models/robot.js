@@ -15,6 +15,7 @@ module.exports = class Robot {
         this.program = []
         this.compiled = false
         this.types = new Types()
+        this.animation = 0
     }
 
     moveXSteps(steps) {
@@ -67,7 +68,7 @@ module.exports = class Robot {
     }
 
     backUp() {
-      this.move(this.getReverseDirection())
+      this.move(this.getReverseDirection(), 1)
     }
 
     uTurn() {
