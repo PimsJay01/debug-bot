@@ -102,7 +102,6 @@ io.sockets.on('connection', socket => {
   socket.on('client:stepover', (newRobot) => {
       console.info('cient:stepover')
       let robot = _.find(game.robots, robot => robot.id == newRobot.id)
-      robot.position = newRobot.position
       if (isGameOver()) {
         let youwon = true
         _.each(game.robots, robot => {
