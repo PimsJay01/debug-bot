@@ -118,6 +118,19 @@ io.sockets.on('connection', socket => {
       }
   })
 
+  socket.on('client:stepover', () => {
+    console.info('cient:stepover')
+
+    game.distributeCards();
+
+    _.each(game.robots, robot => {
+        robot.program = []
+        console.info('server:cards', robot.id)
+        io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+    })
+
+  })
+
   socket.on('client:gameover', () => {
     console.info('client:gameover')
 
@@ -135,7 +148,7 @@ io.sockets.on('connection', socket => {
     if(game.isStarted()) {
         console.info('server:init')
         _.each(robots, robot => {
-            io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
         })
     } else {
       console.info('unfortunately, we lost a player...')

@@ -26,7 +26,7 @@ export default class extends Phaser.State {
     render() {}
 
     gameover() {
-        window.socket.emit('client:gameover')
-        console.info('client:gameover')
+        window.socket.emit('client:stepover')
+        console.info('client:stepover')
     }
 }

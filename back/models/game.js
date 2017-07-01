@@ -83,7 +83,7 @@ module.exports = class Game {
     distributeCards(){
         _.each(this.robots, robot => {
             while (robot.cards.length < config.robotMaxCards){
-                var cardSelected = this.deck[_.random(this.deck.length)];
+                var cardSelected = this.deck[_.random(this.deck.length-1)];
                 robot.cards.push(cardSelected);
                 this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
             }

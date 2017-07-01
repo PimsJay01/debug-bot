@@ -7,6 +7,7 @@ export default class extends Phaser.State {
 
     init() {
         console.info('game:init')
+        this.resetPrograms()
     }
 
     preload() {
@@ -29,15 +30,7 @@ export default class extends Phaser.State {
             this.cards.push(text)
         }, this)
 
-        this.program = []
-        _.each(_.range(5), index => {
-            let text = this.createInstructionText(index)
-            text.index = index
-            text.inputEnabled = true
-            text.events.onInputUp.add(this.programClick, this)
-
-            this.program.push(text)
-        }, this)
+        this.resetPrograms()
 
         this.btnReady = this.createBtnReady(10, 340)
         this.btnReady.inputEnabled = false
@@ -46,6 +39,18 @@ export default class extends Phaser.State {
         this.refreshTexts()
 
         this.gameFlow = []
+    }
+
+    resetPrograms() {
+      this.program = []
+      _.each(_.range(5), index => {
+          let text = this.createInstructionText(index)
+          text.index = index
+          text.inputEnabled = true
+          text.events.onInputUp.add(this.programClick, this)
+
+          this.program.push(text)
+      }, this)
     }
 
     clearTexts() {
@@ -152,6 +157,7 @@ export default class extends Phaser.State {
     }
 
     programClick(text) {
+        console.info('clicked on program')
         if((text.text != "") && this.isTime()) {
             let card = game.robot.program[text.index]
             game.robot.program.splice(text.index, 1);
