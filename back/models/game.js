@@ -5,35 +5,7 @@ var config = require('./../config')
 var Box = require('./box')
 var Card = require('./card')
 var Command = require('./../models/command')
-
-//U-turn card
-const uTurnId = 0;
-const uTurnRange = _.range(1,6);
-
-//rotate left card
-const rotateLId = 1;
-const rotateLRange = _.range(7,42,2);
-
-// rotate right card
-const rotateRId = 2;
-const rotateRRange = _.range(8,43,2);
-
-//back up card
-const backUpId = 3;
-const backUpRange = _.range(43,49);
-
-//move 1
-const move1Id = 4;
-const move1Range = _.range(49,67);
-
-//move 2
-const move2Id = 5;
-const move2Range = _.range(67,79);
-
-//move 3
-const move3Id = 6;
-const move3Range = _.range(79,85);
-
+var Types = require('./../models/types')
 
 const initalPositions = [
     {x: 0, y: 3},
@@ -45,39 +17,15 @@ const initalPositions = [
 const initalColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFFFF]
 const initalFills = ['#ff0000', '#00ff00', '#0000ff', '#ffffff']
 
-const MovementType = {
-  NORTH : 0,
-  EAST : 1,
-  SOUTH : 2,
-  WEST : 3,
-  TURN_RIGHT : 4,
-  TURN_LEFT : 5,
-  U_TURN : 6,
-  STAY : 7
-}
-
-const Type = {
-  DEFAULT : 0,
-  START_1 : 1,
-  START_2 : 2,
-  START_3 : 3,
-  START_4 : 4,
-  TRAVELATOR_S_N : 5,
-  TRAVELATOR_W_E : 6,
-  TRAVELATOR_N_S : 7,
-  TRAVELATOR_E_W : 8,
-  HOLE : 9,
-  OBJECTIVE : 10
-}
-
 module.exports = class Game {
     constructor() {
-        this.robots = [];
-        this.board = initBoard();
-        this.started = false;
-        this.deck = buildCardDeck();
-        this['maxPlayers'] = 2;
-        this.currentTurn = 0;
+        this.robots = []
+        this.board = initBoard()
+        this.started = false
+        this.deck = buildCardDeck()
+        this['maxPlayers'] = 2
+        this.currentTurn = 0
+        this.types = new Types()
     }
     isStarted() {
         return this.started
@@ -146,17 +94,17 @@ module.exports = class Game {
     getReverseDirection(direction) {
       let newDirection = 0;
       switch (direction) {
-        case MovementType.NORTH:
-          newDirection = MovementType.SOUTH
+        case types.MovementType.NORTH:
+          newDirection = types.MovementType.SOUTH
           break;
-        case MovementType.SOUTH:
-          newDirection = MovementType.NORTH
+        case types.MovementType.SOUTH:
+          newDirection = types.MovementType.NORTH
           break;
-        case MovementType.EAST:
-          newDirection = MovementType.WEST
+        case types.MovementType.EAST:
+          newDirection = types.MovementType.WEST
           break;
-        case MovementType.WEST:
-          newDirection = MovementType.EAST
+        case types.MovementType.WEST:
+          newDirection = types.MovementType.EAST
           break;
         default:
           break;
@@ -167,17 +115,17 @@ module.exports = class Game {
     turnLeft(direction) {
       let newDirection = 0;
       switch (direction) {
-        case MovementType.NORTH:
-          newDirection = MovementType.WEST
+        case types.MovementType.NORTH:
+          newDirection = types.MovementType.WEST
           break;
-        case MovementType.SOUTH:
-          newDirection = MovementType.EAST
+        case types.MovementType.SOUTH:
+          newDirection = types.MovementType.EAST
           break;
-        case MovementType.EAST:
-          newDirection = MovementType.NORTH
+        case types.MovementType.EAST:
+          newDirection = types.MovementType.NORTH
           break;
-        case MovementType.WEST:
-          newDirection = MovementType.SOUTH
+        case types.MovementType.WEST:
+          newDirection = types.MovementType.SOUTH
           break;
         default:
           break;
@@ -188,17 +136,17 @@ module.exports = class Game {
     turnRight(direction) {
       let newDirection = 0;
       switch (direction) {
-        case MovementType.NORTH:
-          newDirection = MovementType.EAST
+        case types.MovementType.NORTH:
+          newDirection = types.MovementType.EAST
           break;
-        case MovementType.SOUTH:
-          newDirection = MovementType.WEST
+        case types.MovementType.SOUTH:
+          newDirection = types.MovementType.WEST
           break;
-        case MovementType.EAST:
-          newDirection = MovementType.SOUTH
+        case types.MovementType.EAST:
+          newDirection = types.MovementType.SOUTH
           break;
-        case MovementType.WEST:
-          newDirection = MovementType.NORTH
+        case types.MovementType.WEST:
+          newDirection = types.MovementType.NORTH
           break;
         default:
           break;
@@ -217,15 +165,15 @@ module.exports = class Game {
         switch (program.line.type) {
           case uTurnId:
             robot.direction = this.getReverseDirection(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, MovementType.U_TURN))
+            commands.push(new Command(program.robotId, program.line.id, types.MovementType.U_TURN))
             break
           case rotateLId:
             robot.direction = this.turnLeft(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, MovementType.TURN_LEFT))
+            commands.push(new Command(program.robotId, program.line.id, types.MovementType.TURN_LEFT))
             break
           case rotateRId:
             robot.direction = this.turnRight(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, MovementType.TURN_RIGHT))
+            commands.push(new Command(program.robotId, program.line.id, types.MovementType.TURN_RIGHT))
             break
           case backUpId:
             let movement = this.getReverseDirection(robot.direction);
@@ -265,30 +213,31 @@ module.exports = class Game {
 }
 
 function buildCardDeck(){
-        var gameDeck = [];
-        for (var i = 0; i < uTurnRange.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,uTurnId,uTurnRange[i]));
-        }
-        for (var i = 0; i < rotateLRange.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,rotateLId,rotateLRange[i]));
-        }
-        for (var i = 0; i < rotateRRange.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,rotateRId,rotateRRange[i]));
-        }
-        for (var i = 0; i < backUpRange.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,backUpId,backUpRange[i]));
-        }
-        for (var i = 0; i < move1Range.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,move1Id,move1Range[i]));
-        }
-        for (var i = 0; i < move2Range.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,move2Id,move2Range[i]));
-        }
-        for (var i = 0; i < move3Range.length; i++) {
-            gameDeck.push(new Card(gameDeck.length,move3Id,move3Range[i]));
-        }
-        return gameDeck;
-    }
+      let types = new Types()
+      var gameDeck = [];
+      for (var i = 0; i < types.CardTypeRange.U_TURN.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.U_TURN, types.CardTypeRange.U_TURN[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.ROTATE_LEFT.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.ROTATE_LEFT,types.CardTypeRange.ROTATE_LEFT[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.ROTATE_RIGHT.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.ROTATE_RIGHT,types.CardTypeRange.ROTATE_RIGHT[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.BACK_UP.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.BACK_UP,types.CardTypeRange.BACK_UP[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.MOVE_1.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_1,types.CardTypeRange.MOVE_1[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.MOVE_2.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_2,types.CardTypeRange.MOVE_2[i]));
+      }
+      for (var i = 0; i < types.CardTypeRange.MOVE_3.length; i++) {
+          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_3,types.CardTypeRange.MOVE_3[i]));
+      }
+      return gameDeck;
+  }
 
 function initBoard() {
     let board = require("../boards/" + config.boardId)
@@ -306,12 +255,13 @@ function initBoard() {
 }
 
 function getBox(line1, line2, line3) {
+    let types = new Types()
     let walls = getBoxWalls(line1, line2, line3)
     if(line2.includes("||")) {
         if(line1.includes("||")) {
             // travelator from north to south
             if(line3.includes(" vv "))
-                return new Box(Type.TRAVELATOR_N_S, walls)
+                return new Box(types.BoxType.TRAVELATOR_N_S, walls)
             // // travelator from north to east
             // if(line2.includes(">"))
             //     return new Box(3, 90, walls)
@@ -322,7 +272,7 @@ function getBox(line1, line2, line3) {
         if(line3.includes("||")) {
             // travelator from south to north°
             if(line1.includes(" ^^ "))
-                return new Box(Type.TRAVELATOR_S_N, walls)
+                return new Box(types.BoxType.TRAVELATOR_S_N, walls)
             // // travelator from south to east
             // if(line2.includes(">"))
             //     return new Box(2, 90, walls)
@@ -350,31 +300,31 @@ function getBox(line1, line2, line3) {
     if(line2.includes("====")) {
         // travelator from west to east
         if(line2.includes("==== >") || line2.includes("=====>"))
-            return new Box(Type.TRAVELATOR_W_E, walls)
+            return new Box(types.BoxType.TRAVELATOR_W_E, walls)
         // travelator from east to west
         if(line2.includes("< ====") || line2.includes("<====="))
-            return new Box(Type.TRAVELATOR_E_W, walls)
+            return new Box(types.BoxType.TRAVELATOR_E_W, walls)
     }
     // hole
     if((line1 == "xxxxxx") && (line2 == "x    x") && (line3 == "xxxxxx"))
-        return new Box(Type.HOLE, walls)
+        return new Box(types.BoxType.HOLE, walls)
     // objective
     if(line2.includes("00"))
-        return new Box(Type.OBJECTIVE, walls)
+        return new Box(types.BoxType.OBJECTIVE, walls)
     // start 1
     if(line2.includes("01"))
-        return new Box(Type.START_1, walls)
+        return new Box(types.BoxType.START_1, walls)
     // start 2
     if(line2.includes("02"))
-        return new Box(Type.START_2, walls)
+        return new Box(types.BoxType.START_2, walls)
     // start 3
     if(line2.includes("03"))
-        return new Box(Type.START_3, walls)
+        return new Box(types.BoxType.START_3, walls)
     // start 4
     if(line2.includes("04"))
-        return new Box(Type.START_4, walls)
+        return new Box(types.BoxType.START_4, walls)
 
-    return new Box(Type.DEFAULT, walls)
+    return new Box(types.BoxType.DEFAULT, walls)
 }
 
 function getBoxWalls(line1, line2, line3) {
