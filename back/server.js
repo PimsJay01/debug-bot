@@ -54,11 +54,17 @@ io.sockets.on('connection', socket => {
       console.info('client:id', socket.id)
 
       let robot = new Robot(socket.id, name)
+
+
       if(game.addRobot(robot)) {
           if(game.isStarted()) {
               console.info('server:init')
               _.each(game.robots, robot => {
-                  io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+                  io.sockets.sockets[robot.id].emit('server:game:init', { game, robot })
+              })
+          } else {
+              _.each(game.robots, robot => {
+                  io.sockets.sockets[robot.id].emit('server:game:newppl', { game, robot })
               })
           }
       }

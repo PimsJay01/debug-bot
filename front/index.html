@@ -4,25 +4,116 @@
 <head>
     <meta charset="UTF-8">
     <title>Debug Bot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta http-equiv="cleartype" content="on">
 
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/bundle.js"></script>
     <style>
-        html,
-        body {
+        html, body {
             margin: 0;
             padding: 0;
+            height:100%;
+            min-height:100%; 
         }
+
+        .flexbox {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+            align-items: center;
+        }
+
+        .flexbox .row {
+            flex:1;
+        }
+
+        .flexbox .padding-top {
+            flex:1;
+        }
+
+        .flexbox .padding-bottom {
+            flex:1;
+        }
+
+        .flexbox .form {
+            flex:4;
+        }
+
+        .field-style{
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            padding: 8px;
+            outline: none;
+            border: 1px solid #B0CFE0;
+            transition: all 0.30s ease-in-out;
+        }
+
+        button{
+            box-shadow: inset 0px 1px 0px 0px #3985B1;
+            background-color: #216288;
+            border: 1px solid #17445E;
+            display: inline-block;
+            cursor: pointer;
+            color: #FFFFFF;
+            padding: 8px 18px;
+            text-decoration: none;
+            font: 12px Arial, Helvetica, sans-serif;
+        }
+
+        .form{
+            max-width: 450px;
+            background: #FAFAFA;
+            padding: 30px;
+            margin: 50px auto;
+            box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            border: 6px solid #305A72;
+        }
+
+
     </style>
 </head>
 
 <body>
 
-    <div id="content"></div>
-    <script src="dist/vendor.bundle.js"></script>
-    <script src="dist/bundle.js"></script>
+
+
+    <!--    PHASER DIV    -->
+    <div id="game" style="position:relative; display:none">
+        <div style="z-index: 10; position:absolute; right:0; top:0; bottom:0; padding:2%; background-color:rgba(192, 192, 192, 0.5)">
+            <div id="playerAmount"></div>
+            <ul id="inGamePlayerList"></ul>
+        </div>
+        <div id="phaser">
+        </div>
+    </div>
+    
+    
+    <div id="welcome" class="flexbox">
+        <div class="row padding-top">
+        </div>
+
+        <div class="form flexbox">
+            <div class="row">
+                <h2>Robot Race !</h2>
+            </div>
+
+            <div class="row">
+                <input id="pseudo" type="text" name="field3" class="field-style field-full align-none" placeholder="Your pseudo" />
+            </div>
+            <div class="row">
+                <button onclick="window.emitName()">submit</button>
+            </div>
+        </div>
+
+        <div class="row padding-bottom">
+        </div>
+
+    <div>
 
 </body>
 
