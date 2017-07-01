@@ -135,7 +135,7 @@ io.sockets.on('connection', socket => {
     if(game.isStarted()) {
         console.info('server:init')
         _.each(robots, robot => {
-            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+            io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
         })
     } else {
       console.info('unfortunately, we lost a player...')
