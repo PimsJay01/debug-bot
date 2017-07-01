@@ -5,7 +5,7 @@ import Phaser from 'phaser'
 import ReadyState from './states/Ready'
 import GameState from './states/Game'
 import GameFlowState from './states/GameFlow'
-
+import GameOver from './states/GameOver'
 import config from './config'
 
 import io from 'socket.io-client'
@@ -22,6 +22,7 @@ class Game extends Phaser.Game {
     this.state.add('Ready', ReadyState, false)
     this.state.add('Game', GameState, false)
     this.state.add('GameFlow', GameFlowState, false)
+    this.state.add('GameOver', GameOver, false)
 
     this.state.start('Ready')
   }
@@ -61,10 +62,10 @@ window.socket.on('server:cards', ({ game, robot }) => {
     document.getElementById('hoverPlayerList').style.display = "none";
 })
 
-window.socket.on('server:gameover', () => {
+window.socket.on('server:gameover', (youwon) => {
     console.info('server:gameover')
-
-    window.game.state.start('Welcome')
+    window.game.youwon = youwon
+    window.game.state.start('GameOver')
 })
 window.socket.on('server:runProgram', (gameFlow) => {
   console.info('server:runProgram')

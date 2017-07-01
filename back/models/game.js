@@ -51,7 +51,9 @@ module.exports = class Game {
         this.board = initBoard();
         this.started = false;
         this.deck = buildCardDeck();
+
         this['maxPlayers'] = 4;
+        this.currentTurn = 0;
     }
     isStarted() {
         return this.started
