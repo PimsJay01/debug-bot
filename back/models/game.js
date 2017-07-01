@@ -152,8 +152,21 @@ module.exports = class Game {
       return commands;
     }
 
+    isInTheMap(pos) {
+      let height = this.board[0].length
+      let width = this.board.length
+
+      if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
+        return true
+      }
+      return false
+    }
+
     boxFree(pos) {
       let isFree = true
+      if (!this.isInTheMap(pos)) {
+        return false
+      }
       _.each(this.robots, robot => {
           if (pos.x == robot.position.x && pos.y == robot.position.y) {
             isFree = false
