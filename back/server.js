@@ -125,6 +125,7 @@ io.sockets.on('connection', socket => {
 
     _.each(game.robots, robot => {
         robot.program = []
+        robot.compiled = false
         console.info('server:cards', robot.id)
         io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
     })
