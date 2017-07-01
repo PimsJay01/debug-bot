@@ -6,6 +6,7 @@ var Box = require('./box')
 var Card = require('./card')
 var Command = require('./../models/command')
 var Types = require('./../models/types')
+var Robot = require('./../models/robot')
 
 const initalPositions = [
     {x: 0, y: 3},
@@ -172,11 +173,17 @@ module.exports = class Game {
             isFree = false
           }
       })
+
       return isFree
     }
 
+    isWallOnTheRoad(direction, pos) {
+        return this.board[pos.x][pos.y].walls[direction]
+    }
+
     tryBackup(robot) {
-      let r = robot
+      let r = new Robot()
+      r.position = robot.position
       r.direction = robot.getReverseDirection()
       return this.tryMove(r)
     }
@@ -184,32 +191,45 @@ module.exports = class Game {
     tryMove(robot) {
         var pos = robot.position
         var nbStep = 0
+        var newPos = {}
         _.each(_.range(2), step => {
           console.info("position : ", pos)
           console.info("nbStep : ", nbStep)
           switch(robot.direction) {
             case this.types.MovementType.NORTH:
-              if (this.boxFree({x:pos.x, y:pos.y-1})) {
+              newPos = {x:pos.x, y:pos.y-1}
+              if (this.boxFree(newPos) &&
+                  !this.isWallOnTheRoad(robot.direction, pos) &&
+                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
                 nbStep ++
-                pos = {x:pos.x, y:pos.y-1}
+                pos = newPos
               }
               break
             case this.types.MovementType.EAST:
-              if (this.boxFree({x:pos.x+1, y:pos.y})) {
+              newPos = {x:pos.x+1, y:pos.y}
+              if (this.boxFree(newPos) &&
+                  !this.isWallOnTheRoad(robot.direction, pos) &&
+                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
                 nbStep ++
-                pos = {x:pos.x+1, y:pos.y}
+                pos = newPos
               }
               break
             case this.types.MovementType.SOUTH:
-              if (this.boxFree({x:pos.x, y:pos.y+1})) {
+              newPos = {x:pos.x, y:pos.y+1}
+              if (this.boxFree(newPos) &&
+                  !this.isWallOnTheRoad(robot.direction, pos) &&
+                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
                 nbStep ++
-                pos = {x:pos.x, y:pos.y+1}
+                pos = newPos
               }
               break
             case this.types.MovementType.WEST:
-              if (this.boxFree({x:pos.x-1, y:pos.y})) {
+              newPos = {x:pos.x-1, y:pos.y}
+              if (this.boxFree(newPos) &&
+                  !this.isWallOnTheRoad(robot.direction, pos) &&
+                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
                 nbStep ++
-                pos = {x:pos.x-1, y:pos.y}
+                pos = newPos
               }
               break
           }
