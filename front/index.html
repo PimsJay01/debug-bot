@@ -28,7 +28,6 @@
         .flexbox {
             display: flex;
             flex-flow: column;
-            height: 100%;
             align-items: center;
         }
 
@@ -59,7 +58,6 @@
         }
 
         button{
-            box-shadow: inset 0px 1px 0px 0px #3985B1;
             background-color: #216288;
             border: 1px solid #17445E;
             display: inline-block;
@@ -101,9 +99,72 @@
             border: none;
         }
 
-        .selected {
+        .avatarSelected {
             border: 1px solid blue;
         }
+
+        .gameSelected {
+            background-color: grey !important;
+        }
+
+        :disabled {
+            background: #dddddd;
+        }
+
+
+/* bellow, popup styles*/
+
+
+@import "http://fonts.googleapis.com/css?family=Raleway";
+/*----------------------------------------------
+CSS settings for HTML div Exact Center
+------------------------------------------------*/
+#abc {
+width:100%;
+height:100%;
+opacity:.95;
+top:0;
+left:0;
+display:none;
+position:fixed;
+background-color:#313131;
+overflow:auto
+}
+img#close {
+position:absolute;
+right:5px;
+top:5px;
+cursor:pointer
+}
+div#popupContact {
+position:absolute;
+left:50%;
+top:17%;
+margin-left:-202px;
+font-family:'Raleway',sans-serif
+}
+.popup {
+max-width:300px;
+min-width:250px;
+padding:10px 50px;
+border:2px solid gray;
+border-radius:10px;
+font-family:raleway;
+background-color:#fff
+}
+p {
+margin-top:30px
+}
+hr {
+margin:10px -50px;
+border:0;
+border-top:1px solid #ccc
+}
+span {
+color:red;
+font-weight:700
+}
+
 
 
     </style>
@@ -152,7 +213,53 @@
         <div class="row padding-bottom">
         </div>
 
-    <div>
+    </div>
+
+    <div id="lobby" class="flexbox" style="width:100%; height:100%; display:none;">
+        <!-- Popup Div Starts Here -->
+        <div id="popupContact" style="display:none">
+            <!-- Contact Us Form -->
+            <div class="popup" id="form" name="form">
+                <img id="close" src="./assets/images/close_cross.png" onclick ="document.getElementById('popupContact').style.display = 'none'">
+                <h2>Customize game settings</h2>
+                <hr>
+                <input id="name" name="name" placeholder="Name" type="text">
+                <br></br>
+                Amount of players
+                <select name="amount of Players">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <br></br>
+                <button id="createButton" onclick="window.hostGame">Create some fun !</button>
+            </div>
+        </div>
+        <!-- Popup Div Ends Here -->
+        <div class="row padding-top">
+        </div>
+
+        <div class="form flexbox" style="width:100%; height:100%;">
+            <div class="row" style="flex:1; width:100%; text-align:center; border : 2px solid black; border-Radius:10px;">
+                <h2>Robot Race Lobby</h2>
+            </div>
+
+            <div class="row flexbox" style="flex:10; flex-flow: row; align-items:normal; width:100%">
+                
+                <div id="gameList" style="border : 2px solid black; border-Radius:10px; margin: 10px 10px 0px 0px; padding:10px; flex:4">
+                </div>
+                <div id="actions" class="flexbox"  style="flex:1; border : 2px solid black; border-Radius:10px; margin: 10px 0px 0px 10px; padding:10px; align-items:normal">
+                    <button style="margin-bottom:10px" onclick="document.getElementById('popupContact').style.display = 'block'">Host</button>
+                    <button id="joinButton" onclick="window.joinGame()" disabled>Join</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="row padding-bottom">
+        </div>
+
+    </div>
 
 </body>
 

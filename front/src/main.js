@@ -27,9 +27,36 @@ class Game extends Phaser.Game {
 }
 
 
+var gameList = [
+    {
+        id: 100,
+        name : "come, fast",
+        nbPlayers : 2,
+        maxPlayers : 4
+    },
+    {
+        id: 130,
+        name : "noobs only",
+        nbPlayers : 2,
+        maxPlayers : 4
+    },
+    {
+        id: 110,
+        name : "King of the north !!",
+        nbPlayers : 2,
+        maxPlayers : 4
+    },
+    {
+        id: 120,
+        name : "hello, come and beat me ;-)",
+        nbPlayers : 2,
+        maxPlayers : 4
+    }
+]
+
 var avatarList = [
     {
-        selected : false,
+        name : false,
         src : "./assets/images/avatar_fluffy.png"
     },
     {
@@ -60,7 +87,7 @@ window.loadHTMLUI = function(){
     var randomSelect = Math.floor(Math.random() * avatarList.length);
 
     avatarList[randomSelect].selected = true;
-    document.getElementById(randomSelect).className = "selected";
+    document.getElementById(randomSelect).className = "avatarSelected";
 }
 
 window.robotSelected = function(event){
@@ -71,8 +98,25 @@ window.robotSelected = function(event){
             document.getElementById(i).className = "";
         }
         avatarList[id].selected = true;
-        document.getElementById(id).className = "selected";
+        document.getElementById(id).className = "avatarSelected";
     }
+}
+
+window.hostGame = function(){
+    
+}
+
+window.gameSelected = function(event){
+    var id = event.target.id;
+    if (id == "") {
+        id = event.target.parentNode.id;
+    }
+    var htmlGameList = document.getElementById('gameList').childNodes;
+    for (var i = 0; i < htmlGameList.length; i++) {
+        htmlGameList[i].className = "flexbox";
+    }
+    document.getElementById(id).className = "flexbox gameSelected";
+    document.getElementById("joinButton").disabled = false;
 }
 
 window.game = new Game()
@@ -118,12 +162,6 @@ window.socket.on('server:cards', ({ game, robot }) => {
     document.getElementById('hoverPlayerList').style.display = "none";
 })
 
-window.socket.on('server:gameover', (youwon) => {
-    console.info('server:gameover')
-    window.game.youwon = youwon
-    window.game.state.start('GameOver')
-})
-
 window.socket.on('server:runProgram', (flow) => {
   console.info('server:runProgram', { flow })
 
@@ -131,6 +169,36 @@ window.socket.on('server:runProgram', (flow) => {
   window.game.state.start('GameFlow')
 
 })
+
+window.socket.on('server:gameover', (youwon) => {
+    console.info('server:gameover')
+    window.game.youwon = youwon
+    window.game.state.start('GameOver')
+})
+
+window.socket.on('server:gameList', (games) => {
+    console.info('server:gameList', { games })
+    displayGameList(games);
+})
+
+function displayGameList(games){
+    games = gameList;
+    var htmlGameList = document.getElementById('gameList');
+    for (var i = 0; i < games.length; i++) {
+        var motherDiv = document.createElement('div');
+        var gameNameDiv = document.createElement('div');
+        var playersDiv = document.createElement('div');
+        motherDiv.style = "flex-flow: row; align-self:stretch; justify-content: space-between; border: 1px solid black; padding: 3px 10px 3px 10px; margin: 5px 0px 5px 0px; background-color: lightgray;";
+        motherDiv.id = games[i].id;
+        motherDiv.className = "flexbox";
+        motherDiv.onclick = window.gameSelected;
+        gameNameDiv.innerHTML = games[i].name;
+        playersDiv.innerHTML = games[i].nbPlayers + '/' + games[i].maxPlayers + ' Players';
+        htmlGameList.appendChild(motherDiv);
+        motherDiv.appendChild(gameNameDiv);
+        motherDiv.appendChild(playersDiv);
+    }
+}
 
 window.emitName = function() {
     var pseudo = document.getElementById('pseudo').value;
@@ -145,5 +213,14 @@ window.emitName = function() {
     }
     window.socket.emit('client:infos', {name:pseudo,avatarId:avatarSelected});
     document.getElementById('welcome').style.display = "none";
+    document.getElementById('lobby').style.display = "flex";
+
+
+    //TODO remove
+    displayGameList(1);
+}
+
+window.joinGame = function (){
+    document.getElementById('lobby').style.display = "none";
     document.getElementById('game').style.display = "flex";
 }
