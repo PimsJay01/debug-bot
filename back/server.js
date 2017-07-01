@@ -121,7 +121,11 @@ io.sockets.on('connection', socket => {
   socket.on('client:gameover', () => {
     console.info('client:gameover')
 
-    let robots = game.robots
+    let robots = []
+    _.each(game.robots, robot => {
+      robots.push(new Robot(robot.id, robot.name))
+    })
+
     game = new Game()
 
     _.each(robots, robot => {
