@@ -1,6 +1,8 @@
 import Phaser from 'phaser'
 import { res } from '../res'
 
+import Map from '../map'
+
 export default class extends Phaser.State {
 
     init() {
@@ -9,11 +11,14 @@ export default class extends Phaser.State {
 
     preload() {
         this.stage.backgroundColor = '#00FF00'
+        this.map = new Map()
 
         game.load.image('readyBtn', res.images.readyBtn);
     }
 
     create() {
+        this.map.create()
+
         var playButton = game.add.button(game.width/2, game.height/2, 'readyBtn', this.emitReady, this);
         playButton.anchor.setTo(0.5);
         playButton.scale.setTo(0.55,0.55);
