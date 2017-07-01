@@ -1,7 +1,7 @@
 module.exports = class Command {
-    constructor(robotId, card, action) {
+    constructor(robotId, cardId, action) {
         this.robotId = robotId
-        this.card = card
+        this.cardId = cardId
         this.action = action
     }
 }

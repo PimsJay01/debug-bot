@@ -60,13 +60,13 @@ module.exports = class Game {
         let temp = []
         _.each(this.robots, robot => {
           temp.push({
-            'id' : robot.id,
-            'program' : robot.program[index]
+            'robotId' : robot.id,
+            'line' : robot.program[index]
           })
         })
         console.info('DEBUG : ', temp)
         sortedPrograms.push(_.sortBy(temp, step => {
-          return -step.program.priority
+          return -step.line.priority
         }))
       })
       return _.flatten(sortedPrograms)
