@@ -93,7 +93,7 @@ export default class {
 
         var factor = game.width / this.map.width
         this.map.scale = new Phaser.Point(factor, factor)
-        this.map.top = (game.height - this.map.height) / 2.0
+        this.map.top = 0
         this.map.left = 0
 
         this.animationDone = true;
@@ -107,18 +107,8 @@ export default class {
         return (this.height / 3.0 * y) - (this.height / 3.0 * x) + 1;
     }
 
-    // isAnimationDone() {
-    //     return this.animationDone;
-    // }
-    //
-    // focus(robotId) {
-    //     let indexRobot = _.indexOf(this.robots, _.filter(this.robots, robot => robot.id = robotId))
-    //
-    // }
-
     render() {
         // TODO sort robot before display them
-        // this.lifes.removeAll()
         _.each(game.datas.robots, robot => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
                 this.robots[robot.id][indexImage].visible = false
@@ -135,7 +125,6 @@ export default class {
     displayLife(robot, x, y) {
         let graphics = this.lifes[robot.id]
         graphics.clear()
-        // graphics.lineStyle(2, 0xFF0000, 1);
         graphics.beginFill(0xFF0000, 1)
         let size = (graphics.x / 5.0) - 8;
         _.each(_.range(robot.health), index => {

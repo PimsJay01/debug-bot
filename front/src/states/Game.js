@@ -10,61 +10,208 @@ export default class extends Phaser.State {
 
     init() {
         console.info('game:init')
-        this.resetPrograms()
     }
 
     preload() {
+        this.map = new Map()
         this.stage.backgroundColor = '#0F0F0F'
         this.stage.disableVisibilityChange = true
-        this.map = new Map()
+
+        game.load.image('card', res.images.card)
+
+        game.load.image('uTurn', res.images.uTurn)
+        game.load.image('rotateL', res.images.rotateL)
+        game.load.image('rotateR', res.images.rotateR)
+        game.load.image('backUp', res.images.backUp)
+        game.load.image('move1', res.images.move1)
+        game.load.image('move2', res.images.move2)
+        game.load.image('move3', res.images.move3)
     }
 
     create() {
-        // this.counter = this.createText(10, 10)
-        // this.counter.text = this.getCounter()
-
         this.map.create()
 
+        this.width = 128
+        this.height = 192
+
+        this.interface = game.add.group()
+
+        game.add.text(0, 0, 'Instructions', {
+            font: '32px Arial',
+            fill: '#ffffff',
+            boundsAlignH: 'left',
+            boundsAlignV: 'middle'
+        }, this.interface).setTextBounds(8, 0, 5 * this.width, this.height / 2.0)
+
+        this.programLabel = game.add.text(0, 0, 'Program (0/5)', {
+            font: '32px Arial',
+            fill: '#ffffff',
+            boundsAlignH: 'right',
+            boundsAlignV: 'middle'
+        }, this.interface)
+        this.programLabel.setTextBounds(6 * this.width, 0, 5 * this.width - 8, this.height / 2.0)
+
+        this.avatar = game.add.graphics(0, 0)
+        this.avatar.beginFill(game.robot.color, 1)
+        this.avatar.drawRect(11 * this.width, 0, this.height * 1.5, this.height * 1.5)
+        this.avatar.endFill()
+        this.interface.add(this.avatar)
+
+        this.btnRun = game.add.text(0, 0, 'Run', {
+            font: '128px Arial',
+            fill: '#ffffff',
+            boundsAlignH: 'center',
+            boundsAlignV: 'middle'
+        }, this.interface)
+        this.btnRun.setTextBounds(11 * this.width, 0, 2 * this.width, this.height * 1.5)
+        this.btnRun.visible = false
+        this.btnRun.inputEnabled = true
+        this.btnRun.events.onInputUp.add(this.btnRunClick, this)
+
         this.cards = []
-        _.each(_.range(9), index => {
-            let text = this.createCardText(index)
-            text.index = index
-            text.inputEnabled = true
-            text.events.onInputUp.add(this.cardClick, this)
+        this.drawCards()
 
-            this.cards.push(text)
-        }, this)
+        this.program = []
+        this.drawProgram()
 
-        this.resetPrograms()
-
-        this.btnReady = this.createBtnReady(10, 340)
-        this.btnReady.inputEnabled = false
-        this.btnReady.events.onInputUp.add(this.btnReadyClick, this)
-
-        this.refreshTexts()
+        var factor = game.width / (this.interface.width + 8)
+        this.interface.scale = new Phaser.Point(factor, factor)
+        this.interface.bottom = game.height - 8
+        this.interface.left = 0
 
         this.gameFlow = []
     }
 
-    resetPrograms() {
-      this.program = []
-      _.each(_.range(5), index => {
-          let text = this.createInstructionText(index)
-          text.index = index
-          text.inputEnabled = true
-          text.events.onInputUp.add(this.programClick, this)
+    refresh() {
+        _.each(this.cards, group => {
+            group.destroy()
+        })
+        this.cards = []
 
-          this.program.push(text)
-      }, this)
+        _.each(this.program, group => {
+            group.destroy()
+        })
+        this.program = []
+
+        this.drawCards()
+        this.drawProgram()
     }
 
-    clearTexts() {
-        _.each(_.range(9), index => {
-            this.cards[index].text = ""
+    drawCards() {
+        _.each(game.robot.cards, (card, index) => {
+            let group = game.add.group()
+            group.inputEnableChildren = true
+            group.onChildInputUp.add(this.cardClick, this)
+
+            let image = game.add.image(index * this.width, this.height / 2.0, 'card')
+            image.index = index
+            group.add(image)
+
+            let action = game.add.image((index + 0.5) * this.width, this.height * 0.9, this.getActionName(card.type))
+            action.anchor.x = 0.5
+            action.width = this.width * 0.8
+            action.height = this.width * 0.8
+            action.index = index
+            group.add(action)
+
+            let text = game.add.text(0, 0, card.priority, {
+                font: '64px Arial',
+                fill: '#000000',
+                boundsAlignH: 'center'
+            }, group)
+            text.index = index
+            text.setTextBounds(index * this.width, this.height / 1.75, this.width, this.height)
+
+            this.cards.push(group)
+            this.interface.add(group)
         }, this)
-        _.each(_.range(5), index => {
-            this.program[index].text = ""
+    }
+
+    cardClick(child) {
+        if(game.robot.program.length < 5) {
+            let card = game.robot.cards[child.index]
+            game.robot.cards.splice(child.index, 1);
+            game.robot.program.push(card)
+
+            if(game.robot.program.length == 5) {
+              this.btnRun.visible = true
+            }
+
+            this.emitProgram()
+        }
+    }
+
+    drawProgram() {
+        this.programLabel.setText('Program ('+game.robot.program.length+'/5)')
+        _.each(game.robot.program, (line, index) => {
+            let group = game.add.group()
+            group.inputEnableChildren = true
+            group.onChildInputUp.add(this.lineClick, this)
+
+            let width = (11 - game.robot.program.length + index) * this.width
+            console.info(width)
+            let image = game.add.image(width, this.height / 2.0, 'card')
+            image.index = index
+            group.add(image)
+
+            let action = game.add.image(width + 0.5 * this.width, this.height * 0.9, this.getActionName(line.type))
+            action.anchor.x = 0.5
+            action.width = this.width * 0.8
+            action.height = this.width * 0.8
+            action.index = index
+            group.add(action)
+
+            let text = game.add.text(0, 0, line.priority, {
+                font: '64px Arial',
+                fill: '#000000',
+                boundsAlignH: 'center'
+            }, group)
+            text.index = index
+            text.setTextBounds(width, this.height / 1.75, this.width, this.height)
+
+            this.program.push(group)
+            this.interface.add(group)
         }, this)
+    }
+
+    lineClick(child) {
+        let line = game.robot.program[child.index]
+        game.robot.program.splice(child.index, 1);
+        game.robot.cards.push(line)
+
+        if(game.robot.program.length < 5) {
+          this.btnRun.visible = false
+        }
+
+        this.emitProgram()
+    }
+
+    getActionName(cardType) {
+        let actionName = ''
+        switch(cardType) {
+            case 0 :
+                actionName = 'uTurn'
+            break;
+            case 1 :
+                actionName = 'rotateL'
+            break;
+            case 2 :
+                actionName = 'rotateR'
+            break;
+            case 3 :
+                actionName = 'backUp'
+            break;
+            case 4 :
+                actionName = 'move1'
+            break;
+            case 5 :
+                actionName = 'move2'
+            break;
+            case 6 :
+                actionName = 'move3'
+            break;
+        }
+        return actionName;
     }
 
     refreshTexts() {
@@ -76,49 +223,8 @@ export default class extends Phaser.State {
         }, this)
     }
 
-    createCardText(index) {
-        return this.createText(10, 40 + (index * 30))
-    }
-
-    createInstructionText(index) {
-        return this.createText(10 + (game.width / 2), 40 + (index * 30))
-    }
-
-    createText(posX, posY) {
-        console.info(game.robot.color);
-        return game.add.text(posX, posY, '', {
-            font: '20px Arial',
-            fill: '' + game.robot.fill,
-            align: 'center'
-        })
-    }
-
-    createBtnReady(posX, posY) {
-        return game.add.text(posX, posY, '', {
-            font: '20px Arial',
-            fill: '' + game.robot.fill,
-            align: 'center'
-        })
-    }
-
     render() {
         this.map.render()
-    }
-
-    getCounter() {
-        if(!this.isTime()) {
-            return "0:00"
-        }
-        let diff = this.getTimeDiff()
-        return [diff.minutes(), diff.seconds()].join(':')
-    }
-
-    getTimeDiff() {
-        return moment.duration(-moment().diff(game.datas.deadline))
-    }
-
-    isTime() {
-        return true;//this.getTimeDiff().asMinutes() > 0
     }
 
     getCardTypeName(card) {
@@ -143,49 +249,25 @@ export default class extends Phaser.State {
         return text
     }
 
-    cardClick(text) {
-        if((text.text != "") && (game.robot.program.length < 5) && this.isTime()) {
-            let card = game.robot.cards[text.index]
-            game.robot.cards.splice(text.index, 1);
-            game.robot.program.push(card)
-            // test if button ready must be enable
-            if( game.robot.program.length == 5 ) {
-              this.btnReady.inputEnabled = true
-              this.btnReady.text = "Ready !"
-            }
-            else {
-              this.btnReady.inputEnabled = false
-              this.btnReady.text = ""
-            }
-
-            this.emitProgram()
-        }
-    }
-
-    programClick(text) {
-        console.info('clicked on program')
-        if((text.text != "") && this.isTime()) {
-            let card = game.robot.program[text.index]
-            game.robot.program.splice(text.index, 1);
-            game.robot.cards.push(card)
-            this.emitProgram()
-            // test if button ready must be enable
-            if(game.robot.program.length < 5){
-              this.btnReady.inputEnabled = false
-              this.btnReady.text = ""
-            }
-        }
-    }
-
-    btnReadyClick() {
+    btnRunClick() {
         window.socket.emit('client:compile')
         console.info('client:compile')
 
+        this.btnRun.inputEnabled = false
+
         _.each(this.cards, card => {
-            card.inputEnabled = false
+            card.getAt(0).tint = 0x7F7F7F
+            card.getAt(1).tint = 0x7F7F7F
+            card.getAt(0).inputEnabled = false
+            card.getAt(1).inputEnabled = false
+            card.getAt(2).inputEnabled = false
         })
-        _.each(this.program, ligne => {
-            ligne.inputEnabled = false
+        _.each(this.program, line => {
+            line.getAt(0).tint = 0x7F7F7F
+            line.getAt(1).tint = 0x7F7F7F
+            line.getAt(0).inputEnabled = false
+            line.getAt(1).inputEnabled = false
+            line.getAt(2).inputEnabled = false
         })
     }
 
@@ -193,7 +275,7 @@ export default class extends Phaser.State {
         window.socket.emit('client:program', game.robot.program)
         console.info('client:program')
 
-        this.clearTexts()
-        this.refreshTexts()
+        // this.clearTexts()
+        this.refresh()
     }
 }
