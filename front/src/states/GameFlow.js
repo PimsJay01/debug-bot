@@ -12,6 +12,7 @@ export default class extends Phaser.State {
 
     preload() {
         this.stage.backgroundColor = '#FF0000'
+        this.stage.disableVisibilityChange = true
         this.map = new Map()
     }
 
