@@ -45,6 +45,31 @@ const initalPositions = [
 const initalColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFFFF]
 const initalFills = ['#ff0000', '#00ff00', '#0000ff', '#ffffff']
 
+const MovementType = {
+  NORTH : 0,
+  EAST : 1,
+  SOUTH : 2,
+  WEST : 3,
+  TURN_RIGHT : 4,
+  TURN_LEFT : 5,
+  U_TURN : 6,
+  STAY : 7
+}
+
+const Type = {
+  DEFAULT : 0,
+  START_1 : 1,
+  START_2 : 2,
+  START_3 : 3,
+  START_4 : 4,
+  TRAVELATOR_S_N : 5,
+  TRAVELATOR_W_E : 6,
+  TRAVELATOR_N_S : 7,
+  TRAVELATOR_E_W : 8,
+  HOLE : 9,
+  OBJECTIVE : 10
+}
+
 module.exports = class Game {
     constructor() {
         this.robots = [];
@@ -188,6 +213,7 @@ module.exports = class Game {
 
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
+        robot.turnLeft()
         switch (program.line.type) {
           case uTurnId:
             robot.direction = this.getReverseDirection(robot.direction)
@@ -277,31 +303,6 @@ function initBoard() {
     }
     console.info('board', temp)
     return temp;
-}
-
-const MovementType = {
-  STAY : 0,
-  NORTH : 1,
-  SOUTH : 2,
-  EAST : 3,
-  WEST : 4,
-  TURN_RIGHT : 5,
-  TURN_LEFT : 6,
-  U_TURN : 7,
-}
-
-const Type = {
-  DEFAULT : 0,
-  START_1 : 1,
-  START_2 : 2,
-  START_3 : 3,
-  START_4 : 4,
-  TRAVELATOR_S_N : 5,
-  TRAVELATOR_W_E : 6,
-  TRAVELATOR_N_S : 7,
-  TRAVELATOR_E_W : 8,
-  HOLE : 9,
-  OBJECTIVE : 10
 }
 
 function getBox(line1, line2, line3) {
