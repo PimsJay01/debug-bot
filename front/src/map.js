@@ -25,6 +25,10 @@ export default class {
         game.load.image('start2', res.tiles.start2)
         game.load.image('start3', res.tiles.start3)
         game.load.image('start4', res.tiles.start4)
+        game.load.image('travelatorWE', res.tiles.travelatorWE)
+        game.load.image('travelatorNS', res.tiles.travelatorNS)
+        game.load.image('travelatorEW', res.tiles.travelatorEW)
+        game.load.image('travelatorSN', res.tiles.travelatorSN)
 
         game.load.image('robot1n', res.tiles.robot1n)
         game.load.image('robot1e', res.tiles.robot1e)
@@ -57,6 +61,18 @@ export default class {
                         break;
                     case Type.START_4:
                         boxType = 'start4'
+                        break;
+                    case Type.TRAVELATOR_S_N:
+                        boxType = 'travelatorSN'
+                        break;
+                    case Type.TRAVELATOR_W_E:
+                        boxType = 'travelatorWE'
+                        break;
+                    case Type.TRAVELATOR_N_S:
+                        boxType = 'travelatorNS'
+                        break;
+                    case Type.TRAVELATOR_E_W:
+                        boxType = 'travelatorEW'
                         break;
                     case Type.HOLE:
                         boxType = 'hole'

@@ -16,6 +16,10 @@ export const res = {
     },
     tiles : {
         default : tiles + '001.png',
+        travelatorWE : tiles + '005.png',
+        travelatorNS : tiles + '006.png',
+        travelatorEW : tiles + '007.png',
+        travelatorSN : tiles + '008.png',
         start1 : tiles + '011.png',
         start2 : tiles + '012.png',
         start3 : tiles + '013.png',
