@@ -178,6 +178,7 @@ export default class extends Phaser.State {
     }
 
     btnReadyClick() {
+        this.btnReady.inputEnabled = false
         window.socket.emit('client:compile')
         console.info('client:compile')
 

@@ -14,12 +14,13 @@ export default class extends Phaser.State {
         this.stage.backgroundColor = '#FF0000'
         this.stage.disableVisibilityChange = true
         this.map = new Map()
+
     }
 
     create() {
         this.map.create()
-
-        game.add.text(40, 40, 'Resolving game flow...', {
+        this.robot
+        window.game.add.text(40, 40, 'Resolving game flow...', {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
@@ -27,10 +28,10 @@ export default class extends Phaser.State {
 
         this.indexFlow = 0;
         this.interval = setInterval(() => {
-            if(game.flow.length > this.indexFlow) {
-                let command = game.flow[this.indexFlow]
+            if(window.game.flow.length > this.indexFlow) {
+                let command = window.game.flow[this.indexFlow]
                 console.info('command', command)
-                let robot = _.find(game.datas.robots, robot => robot.id == command.robotId)
+                let robot = _.find(window.game.datas.robots, robot => robot.id == command.robotId)
                 console.info('robot', robot)
                 switch(command.action) {
                     case 0 :
@@ -55,6 +56,7 @@ export default class extends Phaser.State {
                         robot.direction = (robot.direction + 2) % 4;
                         break;
                 }
+                this.robot = robot
                 this.indexFlow++;
             }
             else {
@@ -85,7 +87,7 @@ export default class extends Phaser.State {
     }
 
     stepover() {
-        window.socket.emit('client:stepover')
+        window.socket.emit('client:stepover', this.robot)
         console.info('client:stepover')
     }
 }

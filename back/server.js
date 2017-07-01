@@ -17,15 +17,6 @@ var game = new Game()
 
 var cards = []
 
-const Type = {
-  U_TURN : 0,
-  ROTATE_LEFT : 1,
-  ROTATE_RIGHT : 2,
-  BACK_UP : 3,
-  MOVE : 4,
-  DEAD : 5
-}
-
 // Loading stdin read
 const readline = require('readline');
 
@@ -108,8 +99,9 @@ io.sockets.on('connection', socket => {
       }
   })
 
-  socket.on('client:stepover', () => {
+  socket.on('client:stepover', (newRobot) => {
       console.info('cient:stepover')
+      let robot = _.find(game.robots, robot => robot.id == newRobot.id)
       if (isGameOver()) {
         let youwon = true
         _.each(game.robots, robot => {
@@ -121,14 +113,14 @@ io.sockets.on('connection', socket => {
             robot.program = []
             robot.compiled = false
             console.info('server:cards', robot.id)
+            console.info("server:cards: ", robot.id, " ; ", robot.position, " ; ", robot.direction)
             io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
         })
     }
-
   })
 
   isGameOver = function() {
-    return game.currentTurn >= 2;
+    return game.currentTurn >= 10;
   }
 
   runProgram = function() {
