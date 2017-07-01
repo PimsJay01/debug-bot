@@ -4,7 +4,7 @@ var config = require('./../config')
 
 var Box = require('./box')
 var Card = require('./card')
-
+var Command = require('./../models/command')
 
 //U-turn card
 const uTurnId = 0;
@@ -51,7 +51,7 @@ module.exports = class Game {
         this.board = initBoard();
         this.started = false;
         this.deck = buildCardDeck();
-
+        this['maxPlayers'] = 2;
         this.currentTurn = 0;
     }
     isStarted() {
@@ -117,6 +117,125 @@ module.exports = class Game {
       })
       return _.flatten(sortedPrograms)
     }
+
+    getReverseDirection(direction) {
+      let newDirection = 0;
+      switch (direction) {
+        case MovementType.NORTH:
+          newDirection = MovementType.SOUTH
+          break;
+        case MovementType.SOUTH:
+          newDirection = MovementType.NORTH
+          break;
+        case MovementType.EAST:
+          newDirection = MovementType.WEST
+          break;
+        case MovementType.WEST:
+          newDirection = MovementType.EAST
+          break;
+        default:
+          break;
+      }
+      return newDirection;
+    }
+
+    turnLeft(direction) {
+      let newDirection = 0;
+      switch (direction) {
+        case MovementType.NORTH:
+          newDirection = MovementType.WEST
+          break;
+        case MovementType.SOUTH:
+          newDirection = MovementType.EAST
+          break;
+        case MovementType.EAST:
+          newDirection = MovementType.NORTH
+          break;
+        case MovementType.WEST:
+          newDirection = MovementType.SOUTH
+          break;
+        default:
+          break;
+      }
+      return newDirection;
+    }
+
+    turnRight(direction) {
+      let newDirection = 0;
+      switch (direction) {
+        case MovementType.NORTH:
+          newDirection = MovementType.EAST
+          break;
+        case MovementType.SOUTH:
+          newDirection = MovementType.WEST
+          break;
+        case MovementType.EAST:
+          newDirection = MovementType.SOUTH
+          break;
+        case MovementType.WEST:
+          newDirection = MovementType.NORTH
+          break;
+        default:
+          break;
+      }
+      return newDirection;
+    }
+
+    resolveTurn() {
+      let programs = this.getProgramsSorted()
+      let commands = []
+      let index = 0
+
+      _.each(programs, program => {
+        let robot = this.getRobotById(program.robotId)
+        switch (program.line.type) {
+          case uTurnId:
+            robot.direction = this.getReverseDirection(robot.direction)
+            commands.push(new Command(program.robotId, program.line.id, MovementType.U_TURN))
+            break
+          case rotateLId:
+            robot.direction = this.turnLeft(robot.direction)
+            commands.push(new Command(program.robotId, program.line.id, MovementType.TURN_LEFT))
+            break
+          case rotateRId:
+            robot.direction = this.turnRight(robot.direction)
+            commands.push(new Command(program.robotId, program.line.id, MovementType.TURN_RIGHT))
+            break
+          case backUpId:
+            let movement = this.getReverseDirection(robot.direction);
+            commands.push(new Command(program.robotId, program.line.id, movement))
+            break
+          case move1Id:
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            break
+          case move2Id:
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            break
+          case move3Id:
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            commands.push(new Command(program.robotId, program.line.id, robot.direction))
+            break
+          default:
+            break
+        }
+      })
+
+      console.info('Commands to be send to the client : ', commands)
+      return commands;
+    }
+
+
+    getRobotById(robotId) {
+      let res
+      _.each(this.robots, robot => {
+        if (robot.id == robotId) {
+          res = robot
+        }
+      })
+      return res
+    }
 }
 
 function buildCardDeck(){
@@ -158,6 +277,17 @@ function initBoard() {
     }
     console.info('board', temp)
     return temp;
+}
+
+const MovementType = {
+  STAY : 0,
+  NORTH : 1,
+  SOUTH : 2,
+  EAST : 3,
+  WEST : 4,
+  TURN_RIGHT : 5,
+  TURN_LEFT : 6,
+  U_TURN : 7,
 }
 
 const Type = {
