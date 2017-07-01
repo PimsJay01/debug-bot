@@ -1,4 +1,7 @@
 import Phaser from 'phaser'
+import { res } from '../res'
+
+import Map from '../map'
 
 import _ from 'underscore'
 import moment from 'moment'
@@ -11,14 +14,15 @@ export default class extends Phaser.State {
     }
 
     preload() {
-        this.stage.backgroundColor = '#0000FF'
-
-        // game.plugins.add(new Phaser.Plugin.Isometric(game))
+        this.stage.backgroundColor = '#0F0F0F'
+        this.map = new Map()
     }
 
     create() {
-        this.counter = this.createText(10, 10)
-        this.counter.text = this.getCounter()
+        // this.counter = this.createText(10, 10)
+        // this.counter.text = this.getCounter()
+
+        this.map.create()
 
         this.cards = []
         _.each(_.range(9), index => {
@@ -80,23 +84,24 @@ export default class extends Phaser.State {
     }
 
     createText(posX, posY) {
-        return game.add.text(posX, posY, "", {
-            font: "20px Arial",
-            fill: "#ffffff",
-            align: "center"
+        console.info(game.robot.color);
+        return game.add.text(posX, posY, '', {
+            font: '20px Arial',
+            fill: '' + game.robot.fill,
+            align: 'center'
         })
     }
 
     createBtnReady(posX, posY) {
-        return game.add.text(posX, posY, "", {
-            font: "20px Arial",
-            fill: "#ffffff",
-            align: "center"
+        return game.add.text(posX, posY, '', {
+            font: '20px Arial',
+            fill: '' + game.robot.fill,
+            align: 'center'
         })
     }
 
     render() {
-        this.counter.text = this.getCounter()
+        this.map.render()
     }
 
     getCounter() {
