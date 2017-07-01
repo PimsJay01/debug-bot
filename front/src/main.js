@@ -89,11 +89,23 @@ window.socket.on('server:game:pplupd', ({ game, robot }) => {
     document.getElementById("inGamePlayerList").innerHTML = "";
 
     for (var i = 0; i < game.robots.length; i++) {
+        var img = document.createElement('img');
+        img.src = avatarList[game.robots[i].avatarId].src;
+        img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
         var li = document.createElement('li');
-        li.innerHTML = game.robots[i].name;
+        var playerName = document.createElement('div');
+        playerName.innerHTML = game.robots[i].name;
+        playerName.style.marginRight = '10px';
+        playerName.style.marginLeft = '5px';
+        li.style.marginTop = '5px';
         li.style.border = '2px solid ' + game.robots[i].fill;
+        li.style.display = 'flex';
+        li.style.alignItems = 'center';
+        li.style.borderRadius = '30px';
         li.style.backgroundColor = 'rgba(' + parseInt(game.robots[i].fill.substring(1,3), 16) + ',' + parseInt(game.robots[i].fill.substring(3,5), 16) +',' + parseInt(game.robots[i].fill.substring(5,7), 16) + ', 0.6)';
         document.getElementById("inGamePlayerList").appendChild(li);
+        li.appendChild(img);
+        li.appendChild(playerName);
     }
     window.game.state.start('Waiting')
 })
@@ -125,7 +137,13 @@ window.emitName = function() {
     if (pseudo.length == 0){
         pseudo = "an idiot that did not provide a pseudo";
     }
-    window.socket.emit('client:name', pseudo);
+    var avatarSelected;
+    for (var i = 0; i < avatarList.length; i++) {
+        if (avatarList[i].selected == true) {
+            avatarSelected = i;
+        }
+    }
+    window.socket.emit('client:infos', {name:pseudo,avatarId:avatarSelected});
     document.getElementById('welcome').style.display = "none";
     document.getElementById('game').style.display = "flex";
 }
