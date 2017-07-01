@@ -149,7 +149,6 @@ export default class extends Phaser.State {
             group.onChildInputUp.add(this.lineClick, this)
 
             let width = (11 - game.robot.program.length + index) * this.width
-            console.info(width)
             let image = game.add.image(width, this.height / 2.0, 'card')
             image.index = index
             group.add(image)
@@ -250,10 +249,10 @@ export default class extends Phaser.State {
     }
 
     btnRunClick() {
+        this.btnRun.inputEnabled = false
+
         window.socket.emit('client:compile')
         console.info('client:compile')
-
-        this.btnRun.inputEnabled = false
 
         _.each(this.cards, card => {
             card.getAt(0).tint = 0x7F7F7F
@@ -269,6 +268,8 @@ export default class extends Phaser.State {
             line.getAt(1).inputEnabled = false
             line.getAt(2).inputEnabled = false
         })
+
+        this.btnRun.visible = false
     }
 
     emitProgram() {
