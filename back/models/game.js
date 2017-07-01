@@ -126,7 +126,7 @@ function buildCardDeck(){
         }
         for (var i = 0; i < backUpRange.length; i++) {
             gameDeck.push(new Card(gameDeck.length,backUpId,backUpRange[i]));
-        } 
+        }
         for (var i = 0; i < move1Range.length; i++) {
             gameDeck.push(new Card(gameDeck.length,move1Id,move1Range[i]));
         }
@@ -150,7 +150,18 @@ function initBoard() {
             temp[x][y] = getBox(board.data[(y*3)][x], board.data[(y*3)+1][x], board.data[(y*3)+2][x])
         }
     }
+    console.info('board', temp)
     return temp;
+}
+
+const Type = {
+  DEFAULT : 0,
+  TRAVELATOR_S_N : 1,
+  TRAVELATOR_W_E : 2,
+  TRAVELATOR_N_S : 3,
+  TRAVELATOR_E_W : 4,
+  WALLS : 4,
+  OBJECTIVE : 9
 }
 
 function getBox(line1, line2, line3) {
@@ -159,58 +170,58 @@ function getBox(line1, line2, line3) {
         if(line1.includes("||")) {
             // travelator from north to south
             if(line3.includes(" vv "))
-                return new Box(1, 180, walls)
-            // travelator from north to east
-            if(line2.includes(">"))
-                return new Box(3, 90, walls)
-            // travelator from north to west
-            if(line2.includes("<"))
-                return new Box(2, 270, walls)
+                return new Box(Type.TRAVELATOR_N_S, walls)
+            // // travelator from north to east
+            // if(line2.includes(">"))
+            //     return new Box(3, 90, walls)
+            // // travelator from north to west
+            // if(line2.includes("<"))
+            //     return new Box(2, 270, walls)
         }
         if(line3.includes("||")) {
             // travelator from south to north°
             if(line1.includes(" ^^ "))
-                return new Box(1, 0, walls)
-            // travelator from south to east
-            if(line2.includes(">"))
-                return new Box(2, 90, walls)
-            // travelator from south to west
-            if(line2.includes("<"))
-                return new Box(3, 270, walls)
+                return new Box(Type.TRAVELATOR_S_N, walls)
+            // // travelator from south to east
+            // if(line2.includes(">"))
+            //     return new Box(2, 90, walls)
+            // // travelator from south to west
+            // if(line2.includes("<"))
+            //     return new Box(3, 270, walls)
         }
-        if(line2.includes("|| =") || line2.includes("||==")) {
-            // travelator from east to south
-            if(line1.includes(" ^^ "))
-                return new Box(2, 0, walls)
-            // travelator from east to south
-            if(line3.includes(" vv "))
-                return new Box(3, 180, walls)
-        }
-        if(line2.includes("= ||") || line2.includes("==||")) {
-            // travelator from east to south
-            if(line1.includes(" ^^ "))
-                return new Box(3, 0, walls)
-            // travelator from east to south
-            if(line3.includes(" vv "))
-                return new Box(2, 180, walls)
-        }
+        // if(line2.includes("|| =") || line2.includes("||==")) {
+        //     // travelator from east to south
+        //     if(line1.includes(" ^^ "))
+        //         return new Box(2, 0, walls)
+        //     // travelator from east to south
+        //     if(line3.includes(" vv "))
+        //         return new Box(3, 180, walls)
+        // }
+        // if(line2.includes("= ||") || line2.includes("==||")) {
+        //     // travelator from east to south
+        //     if(line1.includes(" ^^ "))
+        //         return new Box(3, 0, walls)
+        //     // travelator from east to south
+        //     if(line3.includes(" vv "))
+        //         return new Box(2, 180, walls)
+        // }
     }
     if(line2.includes("====")) {
         // travelator from west to east
         if(line2.includes("==== >") || line2.includes("=====>"))
-            return new Box(1, 90, walls)
+            return new Box(Type.TRAVELATOR_W_E, walls)
         // travelator from east to west
         if(line2.includes("< ====") || line2.includes("<====="))
-            return new Box(1, 270, walls)
+            return new Box(Type.TRAVELATOR_E_W, walls)
     }
     // hole
     if((line1 == "xxxxxx") && (line2 == "x    x") && (line3 == "xxxxxx"))
-        return new Box(4, 0, walls)
+        return new Box(Type.WALLS, walls)
     // objective
     if(line2.includes("00"))
-        return new Box(9, 0, walls)
+        return new Box(Type.OBJECTIVE, walls)
 
-    return new Box(0, 0, walls)
+    return new Box(Type.DEFAULT, walls)
 }
 
 function getBoxWalls(line1, line2, line3) {
