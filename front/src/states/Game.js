@@ -81,7 +81,7 @@ export default class extends Phaser.State {
     }
 
     createBtnReady(posX, posY) {
-        return game.add.text(posX, posY, "Ready !", {
+        return game.add.text(posX, posY, "", {
             font: "20px Arial",
             fill: "#ffffff",
             align: "center"
@@ -135,8 +135,16 @@ export default class extends Phaser.State {
             let card = game.robot.cards[text.index]
             game.robot.cards.splice(text.index, 1);
             game.robot.program.push(card)
-            if( game.robot.program.length == 5 ) { this.btnReady.inputEnabled = true }
-            else { this.btnReady.inputEnabled = false }
+            // test if button ready must be enable
+            if( game.robot.program.length == 5 ) {
+              this.btnReady.inputEnabled = true
+              this.btnReady.text = "Ready !"
+            }
+            else {
+              this.btnReady.inputEnabled = false
+              this.btnReady.text = ""
+            }
+
             this.emitProgram()
         }
     }
@@ -147,6 +155,11 @@ export default class extends Phaser.State {
             game.robot.program.splice(text.index, 1);
             game.robot.cards.push(card)
             this.emitProgram()
+            // test if button ready must be enable
+            if(game.robot.program.length < 5){
+              this.btnReady.inputEnabled = false
+              this.btnReady.text = ""
+            }
         }
     }
 
