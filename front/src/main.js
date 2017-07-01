@@ -2,7 +2,7 @@ import 'pixi'
 import 'p2'
 import Phaser from 'phaser'
 
-import ReadyState from './states/Ready'
+import WaitingState from './states/Waiting'
 import GameState from './states/Game'
 import GameFlowState from './states/GameFlow'
 import GameOver from './states/GameOver'
@@ -19,12 +19,10 @@ class Game extends Phaser.Game {
 
     super(width, height, Phaser.CANVAS, 'phaser', null)
 
-    this.state.add('Ready', ReadyState, false)
+    this.state.add('Waiting', WaitingState, false)
     this.state.add('Game', GameState, false)
     this.state.add('GameFlow', GameFlowState, false)
     this.state.add('GameOver', GameOver, false)
-
-    this.state.start('Ready')
   }
 }
 
@@ -32,15 +30,9 @@ window.game = new Game()
 
 window.socket = io(`http://localhost:7777`);
 
-window.socket.on('server:game:init', ({ game, robot }) => {
-    console.info('server:game:init', { game, robot })
-    window.game.datas = game
-    window.game.robot = robot
-    window.game.state.start('Ready')
-})
 
 window.socket.on('server:game:pplupd', ({ game, robot }) => {
-    //console.info('server:game:pplupd', { game, robot })
+    console.info('server:game:pplupd', { game, robot })
     window.game.datas = game
     window.game.robot = robot
     document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
@@ -52,6 +44,7 @@ window.socket.on('server:game:pplupd', ({ game, robot }) => {
         li.innerHTML = game.robots[i].name;
         document.getElementById("inGamePlayerList").appendChild(li);
     }
+    window.game.state.start('Waiting')
 })
 
 window.socket.on('server:cards', ({ game, robot }) => {
