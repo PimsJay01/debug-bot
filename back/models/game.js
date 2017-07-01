@@ -150,11 +150,7 @@ function initBoard() {
             temp[x][y] = getBox(board.data[(y*3)][x], board.data[(y*3)+1][x], board.data[(y*3)+2][x])
         }
     }
-<<<<<<< HEAD
     console.info('board', temp)
-=======
-    console.info("BOARD : ", temp)
->>>>>>> server send game flow to client, client start a GameFlow state and send a request to the server when the game is over, the game is reseted for a new game (doesn't work properly for now)
     return temp;
 }
 
