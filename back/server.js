@@ -114,48 +114,34 @@ io.sockets.on('connection', socket => {
 
       game.getRobot(socket.id).compiled = true
       if(game.areRobotsCompiled()) {
+          game.currentTurn ++
+          console.info('currentTurn : ', game.currentTurn)
           runProgram()
       }
   })
 
   socket.on('client:stepover', () => {
-    console.info('cient:stepover')
-
-    game.distributeCards();
-
-    _.each(game.robots, robot => {
-        robot.program = []
-        robot.compiled = false
-        console.info('server:cards', robot.id)
-        io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
-    })
-
-  })
-
-  socket.on('client:gameover', () => {
-    console.info('client:gameover')
-
-    let robots = []
-    _.each(game.robots, robot => {
-      robots.push(new Robot(robot.id, robot.name))
-    })
-
-    game = new Game()
-
-    _.each(robots, robot => {
-      game.addRobot(robot)
-    })
-
-    if(game.isStarted()) {
-        console.info('server:init')
-        _.each(robots, robot => {
-            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+      console.info('cient:stepover')
+      if (isGameOver()) {
+        let youwon = true
+        _.each(game.robots, robot => {
+            io.sockets.sockets[robot.id].emit('server:gameover', youwon)
         })
-    } else {
-      console.info('unfortunately, we lost a player...')
+      } else {
+        game.distributeCards();
+        _.each(game.robots, robot => {
+            robot.program = []
+            robot.compiled = false
+            console.info('server:cards', robot.id)
+            io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+        })
     }
 
   })
+
+  isGameOver = function() {
+    return game.currentTurn >= 2;
+  }
 
   runProgram = function() {
       console.info('server:runProgram', game.getProgramsSorted())
