@@ -44,6 +44,8 @@ export default class extends Phaser.State {
         this.btnReady.events.onInputUp.add(this.btnReadyClick, this)
 
         this.refreshTexts()
+
+        this.gameFlow = []
     }
 
     clearTexts() {

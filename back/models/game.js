@@ -150,7 +150,11 @@ function initBoard() {
             temp[x][y] = getBox(board.data[(y*3)][x], board.data[(y*3)+1][x], board.data[(y*3)+2][x])
         }
     }
+<<<<<<< HEAD
     console.info('board', temp)
+=======
+    console.info("BOARD : ", temp)
+>>>>>>> server send game flow to client, client start a GameFlow state and send a request to the server when the game is over, the game is reseted for a new game (doesn't work properly for now)
     return temp;
 }
 
@@ -229,13 +233,13 @@ function getBoxWalls(line1, line2, line3) {
     // north walls
     if(line1.includes("----"))
         walls[0] = true
-    // north walls
+    // east walls
     if((line1.charAt(5) == "|") && (line2.charAt(5) == "|") && (line3.charAt(5) == "|"))
         walls[1] = true
     // south walls
     if(line3.includes("----"))
         walls[2] = true
-    // north walls
+    // west walls
     if((line1.charAt(0) == "|") && (line2.charAt(0) == "|") && (line3.charAt(0) == "|"))
         walls[3] = true
     return walls;

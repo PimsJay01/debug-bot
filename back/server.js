@@ -118,6 +118,27 @@ io.sockets.on('connection', socket => {
       }
   })
 
+  socket.on('client:gameover', () => {
+    console.info('client:gameover')
+
+    let robots = game.robots
+    game = new Game()
+
+    _.each(robots, robot => {
+      game.addRobot(robot)
+    })
+
+    if(game.isStarted()) {
+        console.info('server:init')
+        _.each(robots, robot => {
+            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+        })
+    } else {
+      console.info('unfortunately, we lost a player...')
+    }
+
+  })
+
   runProgram = function() {
       console.info('server:runProgram', game.getProgramsSorted())
 
@@ -141,6 +162,9 @@ io.sockets.on('connection', socket => {
       })
 
       console.info('server:runProgram', commands)
+      _.each(game.robots, robot => {
+        io.sockets.sockets[robot.id].emit('server:runProgram', commands)
+      })
 
     //   clearTimeout(game.timeoutId)
   }
