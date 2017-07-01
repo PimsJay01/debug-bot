@@ -54,7 +54,7 @@ window.socket.on('server:gameover', () => {
 })
 
 window.socket.on('server:runProgram', (gameFlow) => {
-  console.info('server:runProgram')
+  console.info('server:runProgram', { gameFlow })
 
   window.game.gameflow = gameFlow
   window.game.state.start('GameFlow')

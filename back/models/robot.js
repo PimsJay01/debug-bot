@@ -13,5 +13,6 @@ module.exports = class Robot {
         this.program = []
         this.ready = false
         this.compiled = false
+        this.animation = 0
     }
 }
