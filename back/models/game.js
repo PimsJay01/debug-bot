@@ -213,7 +213,6 @@ module.exports = class Game {
 
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
-        robot.turnLeft()
         switch (program.line.type) {
           case uTurnId:
             robot.direction = this.getReverseDirection(robot.direction)
