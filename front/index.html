@@ -19,6 +19,12 @@
             min-height:100%; 
         }
 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .flexbox {
             display: flex;
             flex-flow: column;
@@ -73,18 +79,42 @@
             border-radius: 10px;
             border: 6px solid #305A72;
         }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #playerAmount{
+            border-bottom: 2px solid black;
+            text-align: center;
+        }
+        
+        .inGamePlayerList > li {
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.35);
+            padding: 5px;
+            margin: 10px;
+        }
+        
+        li:last-child {
+            border: none;
+        }
+
+        .selected {
+            border: 1px solid blue;
+        }
 
 
     </style>
 </head>
 
-<body>
+<body onload= "window.loadHTMLUI()">
 
 
 
     <!--    PHASER DIV    -->
     <div id="game" style="position:relative; display:none">
-        <div id="hoverPlayerList" style="z-index: 10; position:absolute; right:0; top:0; bottom:0; padding:2%; background-color:rgba(192, 192, 192, 0.5)">
+        <div id="hoverPlayerList" style="z-index: 10; position:absolute; right:0; top:0; bottom:0; padding:2%; background-color:rgba(192, 192, 192, 0.7)">
             <div id="playerAmount"></div>
             <ul id="inGamePlayerList"></ul>
         </div>
@@ -103,7 +133,15 @@
             </div>
 
             <div class="row">
-                <input id="pseudo" type="text" name="field3" class="field-style field-full align-none" placeholder="Your pseudo" />
+                <input autofocus id="pseudo" type="text" name="field3" class="field-style field-full align-none" placeholder="Your pseudo" onkeydown = "if (event.keyCode == 13)
+                       window.emitName()"/>
+            </div>
+            <div class="row">
+                Choose your avatar !
+            </div>
+            <div class="row">
+                <ul id="avatarList" style="display:flex;">
+                </ul>
             </div>
             <div class="row">
                 <button onclick="window.emitName()">submit</button>
