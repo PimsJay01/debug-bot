@@ -12,10 +12,20 @@ var Robot = require('./models/robot')
 var Card = require('./models/card')
 var Box = require('./models/box')
 var Game = require('./models/game')
+var Command = require('./models/command')
 
 var game = new Game()
 
 var cards = []
+
+const Type = {
+  U_TURN : 0,
+  ROTATE_LEFT : 1,
+  ROTATE_RIGHT : 2,
+  BACK_UP : 3,
+  MOVE : 4,
+  DEAD : 5
+}
 
 // Loading stdin read
 const readline = require('readline')
@@ -100,8 +110,8 @@ io.sockets.on('connection', socket => {
       console.info('client:id', socket.id)
 
       let robot = game.getRobot(socket.id)
-      robot.program = _.intersection(robot.cards, program)
-      console.info('client:program(real)', program)
+      robot.program = program
+      console.info('client:program(real)', robot.program)
   })
 
   socket.on('client:compile', () => {
@@ -114,8 +124,57 @@ io.sockets.on('connection', socket => {
       }
   })
 
+  socket.on('client:gameover', () => {
+    console.info('client:gameover')
+
+    let robots = []
+    _.each(game.robots, robot => {
+      robots.push(new Robot(robot.id, robot.name))
+    })
+
+    game = new Game()
+
+    _.each(robots, robot => {
+      game.addRobot(robot)
+    })
+
+    if(game.isStarted()) {
+        console.info('server:init')
+        _.each(robots, robot => {
+            io.sockets.sockets[robot.id].emit('server:init', { game, robot })
+        })
+    } else {
+      console.info('unfortunately, we lost a player...')
+    }
+
+  })
+
   runProgram = function() {
-      console.info('server:runProgram')
+      console.info('server:runProgram', game.getProgramsSorted())
+
+      let programs = game.getProgramsSorted()
+      let commands = []
+      let index = 0
+      _.each(programs, program => {
+        switch (program.line.type) {
+          case 5:
+            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
+            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
+            break;
+          case 6:
+            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
+            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
+            commands.push(new Command(program.robotId, program.line.id, Type.MOVE))
+          default:
+            commands.push(new Command(program.robotId, program.line.id, program.line.type))
+
+        }
+      })
+
+      console.info('server:runProgram', commands)
+      _.each(game.robots, robot => {
+        io.sockets.sockets[robot.id].emit('server:runProgram', commands)
+      })
 
     //   clearTimeout(game.timeoutId)
   }
