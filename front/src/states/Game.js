@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { res } from '../res'
 
 import _ from 'underscore'
 import moment from 'moment'
@@ -12,12 +13,15 @@ export default class extends Phaser.State {
     preload() {
         this.stage.backgroundColor = '#0000FF'
 
+        game.load.image('default', res.tiles.default)
         // game.plugins.add(new Phaser.Plugin.Isometric(game))
     }
 
     create() {
-        this.counter = this.createText(10, 10)
-        this.counter.text = this.getCounter()
+
+        this.createMap()
+        // this.counter = this.createText(10, 10)
+        // this.counter.text = this.getCounter()
 
         this.cards = []
         _.each(_.range(9), index => {
@@ -44,6 +48,38 @@ export default class extends Phaser.State {
         this.btnReady.events.onInputUp.add(this.btnReadyClick, this)
 
         this.refreshTexts()
+    }
+
+    createMap() {
+        let left = 0;
+        let top = game.height / 2.0;
+
+        let width = game.width / game.datas.board.length;
+        let height = width * 2 / 3.0
+
+        for(let x=game.datas.board.length-1; x>=0; x--) {
+            for(let y=0; y<game.datas.board[x].length; y++) {
+                let position = {
+                    x : left + (width / 2.0 * y) + (width / 2.0 * x),
+                    y : top + (height / 3.0 * y) - (height / 3.0 * x)
+                }
+                let boxType = 'default';
+                switch (game.datas.board[x][y].type) {
+                    case 4:
+                        boxType = 'hole'
+                        break;
+                    default:
+                        boxType = 'default'
+                }
+                if(boxType != 'hole') {
+                    let test = game.add.image(position.x, position.y, 'default')
+                    // test.anchor.setTo(0, 0.5);
+                    // test.scale.setTo(0.2,0.2);
+                    test.width = width
+                    test.height = height
+                }
+            }
+        }
     }
 
     clearTexts() {
@@ -89,7 +125,7 @@ export default class extends Phaser.State {
     }
 
     render() {
-        this.counter.text = this.getCounter()
+        // this.counter.text = this.getCounter()
     }
 
     getCounter() {

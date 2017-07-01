@@ -160,7 +160,7 @@ const Type = {
   TRAVELATOR_W_E : 2,
   TRAVELATOR_N_S : 3,
   TRAVELATOR_E_W : 4,
-  WALLS : 4,
+  HOLE : 4,
   OBJECTIVE : 9
 }
 
@@ -216,7 +216,7 @@ function getBox(line1, line2, line3) {
     }
     // hole
     if((line1 == "xxxxxx") && (line2 == "x    x") && (line3 == "xxxxxx"))
-        return new Box(Type.WALLS, walls)
+        return new Box(Type.HOLE, walls)
     // objective
     if(line2.includes("00"))
         return new Box(Type.OBJECTIVE, walls)
