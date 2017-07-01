@@ -80,11 +80,9 @@ io.sockets.on('connection', socket => {
           // TODO Fix setTimeout issue
         //   game.timeoutId = setTimeout(runProgram, 10000)
 
+          game.distributeCards();
+
           _.each(game.robots, robot => {
-              // TODO get 9 cards randomly from deck game.cards[]
-              robot.cards = _.times(9, n => {
-                  return new Card(0, _.random(0, 6), _.random(1, 84))
-              })
               console.info('server:cards', robot.id)
               io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
           })

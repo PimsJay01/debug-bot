@@ -3,6 +3,37 @@ var _ = require('underscore')
 var config = require('./../config')
 
 var Box = require('./box')
+var Card = require('./card')
+
+
+//U-turn card
+const uTurnId = 0;
+const uTurnRange = _.range(1,6);
+
+//rotate left card
+const rotateLId = 1;
+const rotateLRange = _.range(7,42,2);
+
+// rotate right card
+const rotateRId = 2;
+const rotateRRange = _.range(8,43,2);
+
+//back up card
+const backUpId = 3;
+const backUpRange = _.range(43,49);
+
+//move 1
+const move1Id = 4;
+const move1Range = _.range(49,67);
+
+//move 2
+const move2Id = 5;
+const move2Range = _.range(67,79);
+
+//move 3
+const move3Id = 6;
+const move3Range = _.range(79,85);
+
 
 const initalPositions = [
     {x: 0, y: 1},
@@ -13,11 +44,11 @@ const initalPositions = [
 
 module.exports = class Game {
     constructor() {
-        this.robots = []
-        this.board = initBoard()
-        this.started = false
-
-        this['maxPlayers'] = 2
+        this.robots = [];
+        this.board = initBoard();
+        this.started = false;
+        this.deck = buildCardDeck();
+        this['maxPlayers'] = 2;
     }
     isStarted() {
         return this.started
@@ -49,10 +80,45 @@ module.exports = class Game {
         }
         return false;
     }
+    distributeCards(){
+        _.each(this.robots, robot => {
+            while (robot.cards.length < config.robotMaxCards){
+                var cardSelected = this.deck[_.random(this.deck.length)];
+                robot.cards.push(cardSelected);
+                this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
+            }
+        })
+    }
     areRobotsCompiled() {
         return _.every(this.robots, robot => robot.compiled)
     }
 }
+
+function buildCardDeck(){
+        var gameDeck = [];
+        for (var i = 0; i < uTurnRange.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,uTurnId,uTurnRange[i]));
+        }
+        for (var i = 0; i < rotateLRange.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,rotateLId,rotateLRange[i]));
+        }
+        for (var i = 0; i < rotateRRange.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,rotateRId,rotateRRange[i]));
+        }
+        for (var i = 0; i < backUpRange.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,backUpId,backUpRange[i]));
+        } 
+        for (var i = 0; i < move1Range.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,move1Id,move1Range[i]));
+        }
+        for (var i = 0; i < move2Range.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,move2Id,move2Range[i]));
+        }
+        for (var i = 0; i < move3Range.length; i++) {
+            gameDeck.push(new Card(gameDeck.length,move3Id,move3Range[i]));
+        }
+        return gameDeck;
+    }
 
 function initBoard() {
     let board = require("../boards/" + config.boardId)
