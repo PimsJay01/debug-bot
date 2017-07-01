@@ -73,18 +73,18 @@ export default class {
         }
 
         this.robots = [];
-        _.each(_.range(4), () => {
-            let robot = []
+        _.each(game.datas.robots, robot => {
+            let robotImages = []
             _.each(['n', 'e', 's', 'w'], direction => {
                 let image = game.add.image(0, 0, 'robot1' + direction)
                 image.visible = false
 
 // q               game.physics.enable(image, Phaser.Physics.ARCADE);
                 this.map.add(image)
-                robot.push(image)
+                robotImages.push(image)
             })
 
-            this.robots.push(robot)
+            this.robots[robot.id] = robotImages;
         })
 
         var factor = game.width / this.map.width
@@ -113,14 +113,14 @@ export default class {
     // }
 
     render() {
-        _.each(game.datas.robots, (robot, indexRobot) => {
+        _.each(game.datas.robots, robot => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
-                this.robots[indexRobot][indexImage].visible = false
+                this.robots[robot.id][indexImage].visible = false
             })
-            this.robots[indexRobot][robot.direction].visible = true
-            this.robots[indexRobot][robot.direction].tint = robot.color
-            this.robots[indexRobot][robot.direction].x = this.getPositionXOnMap(robot.position.x, robot.position.y)
-            this.robots[indexRobot][robot.direction].y = this.getPositionYOnMap(robot.position.x + 1, robot.position.y)
+            this.robots[robot.id][robot.direction].visible = true
+            this.robots[robot.id][robot.direction].tint = robot.color
+            this.robots[robot.id][robot.direction].x = this.getPositionXOnMap(robot.position.x, robot.position.y)
+            this.robots[robot.id][robot.direction].y = this.getPositionYOnMap(robot.position.x + 1, robot.position.y)
         })
     }
 }

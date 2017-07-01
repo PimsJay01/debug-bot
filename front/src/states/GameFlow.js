@@ -32,25 +32,25 @@ export default class extends Phaser.State {
                 let robot = _.find(game.datas.robots, robot => robot.id == command.robotId)
                 console.info('robot', robot)
                 switch(command.action) {
-                    case 1 :
+                    case 0 :
                         robot.position.y--;
                         break;
-                    case 2 :
+                    case 1 :
                         robot.position.y++;
                         break;
-                    case 3 :
+                    case 2 :
                         robot.position.x--;
                         break;
-                    case 4 :
+                    case 3 :
                         robot.position.x++;
                         break;
-                    case 5 :
+                    case 4 :
                         robot.direction = (robot.direction + 1) % 4;
                         break;
-                    case 6 :
-                        robot.direction = (robot.direction - 1) % 4;
+                    case 5 :
+                        robot.direction = (robot.direction + 3) % 4;
                         break;
-                    case 7 :
+                    case 6 :
                         robot.direction = (robot.direction + 2) % 4;
                         break;
                 }
