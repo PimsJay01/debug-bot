@@ -36,7 +36,7 @@ export default class {
         this.width = 172
         this.height = 128
 
-        this.map = game.add.group();
+        this.map = game.add.group()
 
         for(let x=game.datas.board.length-1; x>=0; x--) {
             for(let y=0; y<game.datas.board[x].length; y++) {
@@ -73,18 +73,22 @@ export default class {
         }
 
         this.robots = [];
+        this.lifes = [];
         _.each(game.datas.robots, robot => {
             let robotImages = []
             _.each(['n', 'e', 's', 'w'], direction => {
                 let image = game.add.image(0, 0, 'robot1' + direction)
                 image.visible = false
 
-// q               game.physics.enable(image, Phaser.Physics.ARCADE);
                 this.map.add(image)
                 robotImages.push(image)
             })
 
-            this.robots[robot.id] = robotImages;
+            let graphics = game.add.graphics(this.width, this.width / 16);
+            this.map.add(graphics)
+            this.lifes[robot.id] = graphics
+
+            this.robots[robot.id] = robotImages
         })
 
         var factor = game.width / this.map.width
@@ -113,14 +117,30 @@ export default class {
     // }
 
     render() {
+        // TODO sort robot before display them
+        // this.lifes.removeAll()
         _.each(game.datas.robots, robot => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
                 this.robots[robot.id][indexImage].visible = false
             })
-            this.robots[robot.id][robot.direction].visible = true
-            this.robots[robot.id][robot.direction].tint = robot.color
-            this.robots[robot.id][robot.direction].x = this.getPositionXOnMap(robot.position.x, robot.position.y)
-            this.robots[robot.id][robot.direction].y = this.getPositionYOnMap(robot.position.x + 1, robot.position.y)
+            let temp = this.robots[robot.id][robot.direction]
+            temp.visible = true
+            temp.tint = robot.color
+            temp.x = this.getPositionXOnMap(robot.position.x, robot.position.y)
+            temp.y = this.getPositionYOnMap(robot.position.x + 1, robot.position.y)
+            this.displayLife(robot, temp.x, temp.y)
         })
+    }
+
+    displayLife(robot, x, y) {
+        let graphics = this.lifes[robot.id]
+        graphics.clear()
+        // graphics.lineStyle(2, 0xFF0000, 1);
+        graphics.beginFill(0xFF0000, 1)
+        let size = (graphics.x / 5.0) - 8;
+        _.each(_.range(robot.health), index => {
+            graphics.drawRect(x - this.width + (index * (size + 8)), y - (this.height / 4.0), size, graphics.y)
+        })
+        graphics.endFill()
     }
 }
