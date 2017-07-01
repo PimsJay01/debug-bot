@@ -36,9 +36,9 @@ const move3Range = _.range(79,85);
 
 
 const initalPositions = [
-    {x: 0, y: 1},
     {x: 0, y: 3},
     {x: 0, y: 5},
+    {x: 0, y: 1},
     {x: 0, y: 7}
 ]
 
@@ -156,12 +156,16 @@ function initBoard() {
 
 const Type = {
   DEFAULT : 0,
-  TRAVELATOR_S_N : 1,
-  TRAVELATOR_W_E : 2,
-  TRAVELATOR_N_S : 3,
-  TRAVELATOR_E_W : 4,
-  WALLS : 4,
-  OBJECTIVE : 9
+  START_1 : 1,
+  START_2 : 2,
+  START_3 : 3,
+  START_4 : 4,
+  TRAVELATOR_S_N : 5,
+  TRAVELATOR_W_E : 6,
+  TRAVELATOR_N_S : 7,
+  TRAVELATOR_E_W : 8,
+  HOLE : 9,
+  OBJECTIVE : 10
 }
 
 function getBox(line1, line2, line3) {
@@ -216,10 +220,22 @@ function getBox(line1, line2, line3) {
     }
     // hole
     if((line1 == "xxxxxx") && (line2 == "x    x") && (line3 == "xxxxxx"))
-        return new Box(Type.WALLS, walls)
+        return new Box(Type.HOLE, walls)
     // objective
     if(line2.includes("00"))
         return new Box(Type.OBJECTIVE, walls)
+    // start 1
+    if(line2.includes("01"))
+        return new Box(Type.START_1, walls)
+    // start 2
+    if(line2.includes("02"))
+        return new Box(Type.START_2, walls)
+    // start 3
+    if(line2.includes("03"))
+        return new Box(Type.START_3, walls)
+    // start 4
+    if(line2.includes("04"))
+        return new Box(Type.START_4, walls)
 
     return new Box(Type.DEFAULT, walls)
 }
