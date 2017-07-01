@@ -91,69 +91,6 @@ module.exports = class Game {
       return _.flatten(sortedPrograms)
     }
 
-    getReverseDirection(direction) {
-      let newDirection = 0;
-      switch (direction) {
-        case types.MovementType.NORTH:
-          newDirection = types.MovementType.SOUTH
-          break;
-        case types.MovementType.SOUTH:
-          newDirection = types.MovementType.NORTH
-          break;
-        case types.MovementType.EAST:
-          newDirection = types.MovementType.WEST
-          break;
-        case types.MovementType.WEST:
-          newDirection = types.MovementType.EAST
-          break;
-        default:
-          break;
-      }
-      return newDirection;
-    }
-
-    turnLeft(direction) {
-      let newDirection = 0;
-      switch (direction) {
-        case types.MovementType.NORTH:
-          newDirection = types.MovementType.WEST
-          break;
-        case types.MovementType.SOUTH:
-          newDirection = types.MovementType.EAST
-          break;
-        case types.MovementType.EAST:
-          newDirection = types.MovementType.NORTH
-          break;
-        case types.MovementType.WEST:
-          newDirection = types.MovementType.SOUTH
-          break;
-        default:
-          break;
-      }
-      return newDirection;
-    }
-
-    turnRight(direction) {
-      let newDirection = 0;
-      switch (direction) {
-        case types.MovementType.NORTH:
-          newDirection = types.MovementType.EAST
-          break;
-        case types.MovementType.SOUTH:
-          newDirection = types.MovementType.WEST
-          break;
-        case types.MovementType.EAST:
-          newDirection = types.MovementType.SOUTH
-          break;
-        case types.MovementType.WEST:
-          newDirection = types.MovementType.NORTH
-          break;
-        default:
-          break;
-      }
-      return newDirection;
-    }
-
     resolveTurn() {
       let programs = this.getProgramsSorted()
       let commands = []
@@ -161,32 +98,34 @@ module.exports = class Game {
 
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
-        robot.turnLeft()
         switch (program.line.type) {
-          case uTurnId:
-            robot.direction = this.getReverseDirection(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, types.MovementType.U_TURN))
+          case this.types.CardType.U_TURN:
+            //robot.uTurn()
+            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.U_TURN))
             break
-          case rotateLId:
-            robot.direction = this.turnLeft(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, types.MovementType.TURN_LEFT))
+          case this.types.CardType.ROTATE_LEFT:
+            //robot.turnLeft()
+            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_LEFT))
             break
-          case rotateRId:
-            robot.direction = this.turnRight(robot.direction)
-            commands.push(new Command(program.robotId, program.line.id, types.MovementType.TURN_RIGHT))
+          case this.types.CardType.ROTATE_RIGHT:
+            //robot.turnRight()
+            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_RIGHT))
             break
-          case backUpId:
-            let movement = this.getReverseDirection(robot.direction);
-            commands.push(new Command(program.robotId, program.line.id, movement))
+          case this.types.CardType.BACK_UP:
+            //robot.backUp()
+            commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
             break
-          case move1Id:
+          case this.types.CardType.MOVE_1:
+            //robot.moveXSteps(1)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             break
-          case move2Id:
+          case this.types.CardType.MOVE_2:
+            //robot.moveXSteps(2)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             break
-          case move3Id:
+          case this.types.CardType.MOVE_3:
+            //robot.moveXSteps(3)
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
             commands.push(new Command(program.robotId, program.line.id, robot.direction))
@@ -194,6 +133,8 @@ module.exports = class Game {
           default:
             break
         }
+        console.info(robot.position, robot.direction)
+
       })
 
       console.info('Commands to be send to the client : ', commands)

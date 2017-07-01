@@ -17,15 +17,6 @@ var game = new Game()
 
 var cards = []
 
-const Type = {
-  U_TURN : 0,
-  ROTATE_LEFT : 1,
-  ROTATE_RIGHT : 2,
-  BACK_UP : 3,
-  MOVE : 4,
-  DEAD : 5
-}
-
 // Loading stdin read
 const readline = require('readline');
 
@@ -126,11 +117,10 @@ io.sockets.on('connection', socket => {
             io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
         })
     }
-
   })
 
   isGameOver = function() {
-    return game.currentTurn >= 2;
+    return game.currentTurn >= 10;
   }
 
   runProgram = function() {
