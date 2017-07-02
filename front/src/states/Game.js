@@ -26,9 +26,17 @@ export default class extends Phaser.State {
         game.load.image('move1', res.images.move1)
         game.load.image('move2', res.images.move2)
         game.load.image('move3', res.images.move3)
+
+        game.load.audio('musicGame', res.sounds.musicGame);
     }
 
     create() {
+
+        this.music = game.add.audio('musicGame');
+
+        this.music.play();
+        this.music.loop = true
+
         this.map.create()
 
         this.width = 128
