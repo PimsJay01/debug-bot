@@ -4,7 +4,6 @@ import { res } from '../res'
 import Map from '../map'
 
 import _ from 'underscore'
-import moment from 'moment'
 
 var musicPlaying = false
 var music
@@ -32,25 +31,21 @@ export default class extends Phaser.State {
 
         game.load.audio('musicGame', res.sounds.musicGame);
 
-
-        game.load.image('avatar_silhouette', res.images.avatar_silhouette) //
-        game.load.image('avatar_lavander', res.images.avatar_lavander) //
-        game.load.image('avatar_fluffy', res.images.avatar_fluffy) //
-        game.load.image('avatar_skurts', res.images.avatar_skurts) //
-
+        game.load.image('avatar_silhouette', res.images.avatar_silhouette)
+        game.load.image('avatar_lavander', res.images.avatar_lavander)
+        game.load.image('avatar_fluffy', res.images.avatar_fluffy)
+        game.load.image('avatar_skurts', res.images.avatar_skurts)
 
     }
 
     create() {
 
-      //game.robot.avatarId
-
-        if(!musicPlaying){
-          music = game.add.audio('musicGame');
-          music.play();
-          music.loopFull()
-          musicPlaying = true
-        }
+        // if(!musicPlaying){
+        //   music = game.add.audio('musicGame');
+        //   music.play();
+        //   music.loopFull()
+        //   musicPlaying = true
+        // }
 
         this.map.create()
 
@@ -59,7 +54,7 @@ export default class extends Phaser.State {
 
         this.interface = game.add.group()
 
-        game.add.text(0, 0, 'Instructions', {
+        game.add.text(0, 0, 'Instructions (Priority & action)', {
             font: '32px Arial',
             fill: '#ffffff',
             boundsAlignH: 'left',
@@ -73,8 +68,6 @@ export default class extends Phaser.State {
             boundsAlignV: 'middle'
         }, this.interface)
         this.programLabel.setTextBounds(6 * this.width, 0, 5 * this.width - 8, this.height / 2.0)
-
-
 
         this.coloravatar = game.add.graphics(0, 0)
         this.coloravatar.beginFill(game.robot.color, 1)
@@ -244,40 +237,40 @@ export default class extends Phaser.State {
         return actionName;
     }
 
-    refreshTexts() {
-        _.each(game.robot.cards, (card, index) => {
-            this.cards[index].setText(this.getCardTypeName(card))
-        }, this)
-        _.each(game.robot.program, (card, index) => {
-            this.program[index].setText(this.getCardTypeName(card))
-        }, this)
-    }
+    // refreshTexts() {
+    //     _.each(game.robot.cards, (card, index) => {
+    //         this.cards[index].setText(this.getCardTypeName(card))
+    //     }, this)
+    //     _.each(game.robot.program, (card, index) => {
+    //         this.program[index].setText(this.getCardTypeName(card))
+    //     }, this)
+    // }
 
     render() {
         this.map.render()
     }
 
-    getCardTypeName(card) {
-        let text = card.priority + " "
-        switch (card.type) {
-            case 0: text += "U-Turn"
-                break
-            case 1: text += "Rotate left"
-                break
-            case 2: text += "Rotate right"
-                break
-            case 3: text += "Back-up"
-                break
-            case 4: text += "Move 1"
-                break
-            case 5: text += "Move 2"
-                break
-            case 6: text += "Move 3"
-                break
-            default: text += "(Unknow)"
-        }
-        return text
-    }
+    // getCardTypeName(card) {
+    //     let text = card.priority + " "
+    //     switch (card.type) {
+    //         case 0: text += "U-Turn"
+    //             break
+    //         case 1: text += "Rotate left"
+    //             break
+    //         case 2: text += "Rotate right"
+    //             break
+    //         case 3: text += "Back-up"
+    //             break
+    //         case 4: text += "Move 1"
+    //             break
+    //         case 5: text += "Move 2"
+    //             break
+    //         case 6: text += "Move 3"
+    //             break
+    //         default: text += "(Unknow)"
+    //     }
+    //     return text
+    // }
 
     btnRunClick() {
         this.btnRun.inputEnabled = false
