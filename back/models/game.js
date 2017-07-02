@@ -205,8 +205,11 @@ module.exports = class Game {
     }
 
     tryBackup(robot) {
-      let r = Object.assign({}, robot)
-      r.direction = r.getReverseDirection()
+      let r = new Robot()
+      r.position = Object.assign({}, robot.position)
+      r.id = robot.id
+      r.felt = robot.felt
+      r.direction = robot.getReverseDirection()
       return this.tryMove(r, 1)
     }
 
