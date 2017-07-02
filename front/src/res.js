@@ -14,7 +14,11 @@ export const res = {
         backUp : images + 'backUp.jpg',
         move1 : images + 'move1.jpg',
         move2 : images + 'move2.jpg',
-        move3 : images + 'move3.jpg'
+        move3 : images + 'move3.jpg',
+        avatar_fluffy : images + 'avatar_fluffy.png', //
+        avatar_lavander : images + 'avatar_lavander.png', //
+        avatar_silhouette : images + 'avatar_silhouette.png', //
+        avatar_skurts : images + 'avatar_skurts.png' //
     },
     tiles : {
         default : tiles + '001.png',

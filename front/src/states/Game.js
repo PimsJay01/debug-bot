@@ -36,11 +36,20 @@ export default class extends Phaser.State {
 
         game.load.audio('musicGame', res.sounds.musicGame);
 
+
+        game.load.image('avatar_silhouette', res.images.avatar_silhouette) //
+        game.load.image('avatar_lavander', res.images.avatar_lavander) //
+        game.load.image('avatar_fluffy', res.images.avatar_fluffy) //
+        game.load.image('avatar_skurts', res.images.avatar_skurts) //
+
+
     }
 
     create() {
 
-        /*if(!musicPlaying){
+      //game.robot.avatarId
+
+        if(!musicPlaying){
           music = game.add.audio('musicGame');
           music.play();
           music.loopFull()
@@ -69,15 +78,22 @@ export default class extends Phaser.State {
         }, this.interface)
         this.programLabel.setTextBounds(6 * this.width, 0, 5 * this.width - 8, this.height / 2.0)
 
-        this.avatar = game.add.graphics(0, 0)
-        this.avatar.beginFill(game.robot.color, 1)
-        this.avatar.drawRect(11 * this.width, 0, this.height * 1.5, this.height * 1.5)
-        this.avatar.endFill()
+
+
+        this.coloravatar = game.add.graphics(0, 0)
+        this.coloravatar.beginFill(game.robot.color, 1)
+        this.coloravatar.drawRect(11 * this.width, 0, this.height * 1.5, this.height * 1.5)
+        this.coloravatar.endFill()
+        this.interface.add(this.coloravatar)
+        let avatarNames = ['avatar_fluffy', 'avatar_lavander', 'avatar_silhouette', 'avatar_skurts']
+        this.avatar = game.add.image(11.15 * this.width, 20, avatarNames[game.robot.avatarId])
+        //console.log("avatarId : ", game.robot.avatarId)
         this.interface.add(this.avatar)
+
 
         this.btnRun = game.add.text(0, 0, 'Run', {
             font: '128px Arial',
-            fill: '#ffffff',
+            fill: '#14E1DE',
             boundsAlignH: 'center',
             boundsAlignV: 'middle'
         }, this.interface)
@@ -153,6 +169,7 @@ export default class extends Phaser.State {
 
             if(game.robot.program.length == 5) {
               this.btnRun.visible = true
+              this.avatar.visble = false
             }
 
             this.emitProgram()

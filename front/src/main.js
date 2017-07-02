@@ -41,20 +41,29 @@ const MSG_TYPE_CLIENT_GAME_END_TURN = 'client:game:stepover';
 
 var avatarList = [
     {
+<<<<<<< HEAD
         name : false,
         src : "./assets/images/avatar_fluffy.png"
+=======
+        selected : false,
+        src : "./assets/images/avatar_fluffy.png",
+        name : "Fluf" //modif
+>>>>>>> master
     },
     {
         selected : false,
-        src : "./assets/images/avatar_lavander.png"
+        src : "./assets/images/avatar_lavander.png",
+        name : "Lavy" //modif
     },
     {
         selected : false,
-        src : "./assets/images/avatar_silhouette.png"
+        src : "./assets/images/avatar_silhouette.png",
+        name : "Sil" //modif
     },
     {
         selected : false,
-        src : "./assets/images/avatar_skurts.png"
+        src : "./assets/images/avatar_skurts.png",
+        name : "Skurt" //modif
     }
 ]
 
@@ -62,10 +71,14 @@ window.loadHTMLUI = function(){
     for (var i = 0; i < avatarList.length; i++) {
         var li = document.createElement('li');
         var img = document.createElement('img');
+        var avatarName = document.createElement('div');
+        avatarName.innerHTML = avatarList[i].name
+        avatarName.style = "text-align: center";
         img.id = i;
         img.src = avatarList[i].src;
         img.style = "height: 60px; width:60px; border-radius: 50%; margin:5px;";
         img.onclick = window.robotSelected;
+        li.appendChild(avatarName);
         li.appendChild(img);
         document.getElementById("avatarList").appendChild(li);
     }
