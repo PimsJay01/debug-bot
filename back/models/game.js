@@ -37,7 +37,8 @@ module.exports = class Game {
         if(this.robots.length < this.maxPlayers) {
             robot.color = initalColors[this.robots.length]
             robot.fill = initalFills[this.robots.length]
-            robot.position = initalPositions[this.robots.length]
+            robot.position = Object.assign({},initalPositions[this.robots.length])
+            robot.initialPosition = Object.assign({},initalPositions[this.robots.length])
             this.robots.push(robot)
             this.started = this.robots.length >= this.maxPlayers
             return true
@@ -102,74 +103,109 @@ module.exports = class Game {
       console.info("RESOLVE TURN : ", this.currentTurn);
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
-        switch (program.line.type) {
-          case this.types.CardType.U_TURN:
-            robot.uTurn()
-            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.U_TURN))
-            break
-          case this.types.CardType.ROTATE_LEFT:
-            robot.turnLeft()
-            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_LEFT))
-            break
-          case this.types.CardType.ROTATE_RIGHT:
-            robot.turnRight()
-            commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_RIGHT))
-            break
-          case this.types.CardType.BACK_UP:
-            if (this.tryBackup(robot) > 0) {
-              robot.backUp()
-              commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
-            }
-            break
-          case this.types.CardType.MOVE_1:
-            nbStep = Math.min(this.tryMove(robot), 1)
-            console.info("de combien t'avance ", nbStep)
-            robot.moveXSteps(nbStep)
-            _.each(_.range(nbStep), index => {
-                console.info(index, "/", nbStep)
-                commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            })
-            break
-          case this.types.CardType.MOVE_2:
-            nbStep = Math.min(this.tryMove(robot), 2)
-            console.info("de combien t'avance ", nbStep)
-            robot.moveXSteps(nbStep)
-            _.each(_.range(nbStep), index => {
-                console.info(index, "/", nbStep)
-                commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            })
-            break
-          case this.types.CardType.MOVE_3:
-            nbStep = Math.min(this.tryMove(robot), 3)
-            console.info("de combien t'avance ", nbStep)
-            robot.moveXSteps(nbStep)
-            _.each(_.range(nbStep), index => {
-                console.info(index, "/", nbStep)
-                commands.push(new Command(program.robotId, program.line.id, robot.direction))
-            })
-            break
-          default:
-            break
+        if (!robot.felt) {
+          switch (program.line.type) {
+            case this.types.CardType.U_TURN:
+              robot.uTurn()
+              commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.U_TURN))
+              break
+            case this.types.CardType.ROTATE_LEFT:
+              robot.turnLeft()
+              commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_LEFT))
+              break
+            case this.types.CardType.ROTATE_RIGHT:
+              robot.turnRight()
+              commands.push(new Command(program.robotId, program.line.id, this.types.MovementType.TURN_RIGHT))
+              break
+            case this.types.CardType.BACK_UP:
+              if (this.tryBackup(robot) > 0) {
+                robot.backUp()
+                commands.push(new Command(program.robotId, program.line.id, robot.getReverseDirection()))
+              }
+              break
+            case this.types.CardType.MOVE_1:
+              nbStep = this.tryMove(robot, 1)
+              console.info("de combien t'avance ", nbStep)
+              robot.moveXSteps(nbStep)
+              _.each(_.range(nbStep), index => {
+                  console.info(index, "/", nbStep)
+                  commands.push(new Command(program.robotId, program.line.id, robot.direction))
+              })
+              break
+            case this.types.CardType.MOVE_2:
+              nbStep = this.tryMove(robot, 2)
+              console.info("de combien t'avance ", nbStep)
+              robot.moveXSteps(nbStep)
+              _.each(_.range(nbStep), index => {
+                  console.info(index, "/", nbStep)
+                  commands.push(new Command(program.robotId, program.line.id, robot.direction))
+              })
+              break
+            case this.types.CardType.MOVE_3:
+              nbStep = this.tryMove(robot, 3)
+              console.info("de combien t'avance ", nbStep)
+              robot.moveXSteps(nbStep)
+              _.each(_.range(nbStep), index => {
+                  console.info(index, "/", nbStep)
+                  commands.push(new Command(program.robotId, program.line.id, robot.direction))
+              })
+              break
+            default:
+              break
+          }
+          let travel = this.travelator(robot.position)
+          robot.move(travel, 1)
+          if (travel != this.types.MovementType.STAY) {
+            commands.push(new Command(program.robotId, program.line.id, travel))
+          }
+        } else {
+          robot.position = Object.assign({}, robot.initialPosition)
+          robot.direction = this.types.MovementType.EAST
+        }
+      })
+      _.each(this.robots, robot => {
+        console.log(robot.id, robot.felt ? "je suis tombé" : "je suis toujours là")
+        if (robot.felt) {
+          robot.felt = false
+          robot.position = Object.assign({}, robot.initialPosition)
+          robot.direction = this.types.MovementType.EAST
+        }
+        if (this.hasWon(robot.position)) {
+          robot.winner = true
         }
       })
       return commands;
     }
 
+    travelator(pos) {
+      let res = this.board[pos.x][pos.y].type - 5
+      if (res < 0 || res > 4) {
+        res = this.types.MovementType.STAY
+      }
+      return res
+    }
+
     isInTheMap(pos) {
       let height = this.board[0].length
       let width = this.board.length
-
+      console.info("board size : ", width, "x", height, " ; testing pos : ", pos)
       if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
         return true
       }
       return false
     }
 
+    hasFallen(pos) {
+      return ((this.board[pos.x][pos.y].type == this.types.BoxType.HOLE) || !this.isInTheMap(pos))
+    }
+
     boxFree(pos) {
       let isFree = true
+      /*
       if (!this.isInTheMap(pos)) {
         return false
       }
+      */
       _.each(this.robots, robot => {
           if (pos.x == robot.position.x && pos.y == robot.position.y) {
             isFree = false
@@ -180,64 +216,61 @@ module.exports = class Game {
     }
 
     isWallOnTheRoad(direction, pos) {
-        return this.board[pos.x][pos.y].walls[direction]
+        if (pos.x < this.board.length && pos.x >= 0 && pos.y >= 0 && pos.y < this.board[0].length) {
+          return this.board[pos.x][pos.y].walls[direction]
+        }
+        return false
     }
 
     tryBackup(robot) {
       let r = new Robot()
-      r.position = robot.position
+      r.position = Object.assign({}, robot.position)
+      r.id = robot.id
+      r.felt = robot.felt
       r.direction = robot.getReverseDirection()
-      return this.tryMove(r)
+      return this.tryMove(r, 1)
     }
 
-    tryMove(robot) {
-        var pos = robot.position
+    tryMove(robot, max) {
+        var pos = Object.assign({}, robot.position)
         var nbStep = 0
+        var nbStepFall = 100000
         var newPos = {}
-        _.each(_.range(2), step => {
-          console.info("position : ", pos)
-          console.info("nbStep : ", nbStep)
+        let trueRobot = this.getRobotById(robot.id) // FUCKIN BACK UP
+        _.each(_.range(max), step => {
+        //trueRobot.felt = !_.every(_.range(2), step => {
           switch(robot.direction) {
             case this.types.MovementType.NORTH:
-              newPos = {x:pos.x, y:pos.y-1}
-              if (this.boxFree(newPos) &&
-                  !this.isWallOnTheRoad(robot.direction, pos) &&
-                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
-                nbStep ++
-                pos = newPos
-              }
+              newPos = Object.assign({}, {x:pos.x, y:pos.y-1})
               break
             case this.types.MovementType.EAST:
-              newPos = {x:pos.x+1, y:pos.y}
-              if (this.boxFree(newPos) &&
-                  !this.isWallOnTheRoad(robot.direction, pos) &&
-                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
-                nbStep ++
-                pos = newPos
-              }
+              newPos = Object.assign({}, {x:pos.x+1, y:pos.y})
               break
             case this.types.MovementType.SOUTH:
-              newPos = {x:pos.x, y:pos.y+1}
-              if (this.boxFree(newPos) &&
-                  !this.isWallOnTheRoad(robot.direction, pos) &&
-                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
-                nbStep ++
-                pos = newPos
-              }
+              newPos = Object.assign({}, {x:pos.x, y:pos.y+1})
               break
             case this.types.MovementType.WEST:
-              newPos = {x:pos.x-1, y:pos.y}
-              if (this.boxFree(newPos) &&
-                  !this.isWallOnTheRoad(robot.direction, pos) &&
-                  !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
-                nbStep ++
-                pos = newPos
-              }
+              newPos = Object.assign({}, {x:pos.x-1, y:pos.y})
               break
           }
+          if (this.boxFree(newPos) &&
+              !this.isWallOnTheRoad(robot.direction, pos) &&
+              !this.isWallOnTheRoad(robot.getReverseDirection(), newPos)) {
+            nbStep ++
+            pos = Object.assign({}, newPos)
+          }
+          if (this.hasFallen(pos)) {
+            console.info("pos ", pos, " is outside of the map")
+            if(!trueRobot.felt) {
+                trueRobot.felt = true
+                nbStepFall = nbStep
+            }
+          }
         })
-        return nbStep
+        return Math.min(nbStep, nbStepFall)
     }
+
+
 
     getRobotById(robotId) {
       let res
@@ -247,6 +280,13 @@ module.exports = class Game {
         }
       })
       return res
+    }
+
+    hasWon(pos) {
+      if (this.board[pos.x][pos.y].type == this.types.BoxType.TARGET) {
+        return true
+      }
+      return false
     }
 }
 

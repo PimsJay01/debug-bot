@@ -157,9 +157,8 @@ io.sockets.on('connection', socket => {
       console.info('cient:stepover')
       let robot = _.find(game.robots, robot => robot.id == newRobot.id)
       if (isGameOver()) {
-        let youwon = true
         _.each(game.robots, robot => {
-            io.sockets.sockets[robot.id].emit('server:gameover', youwon)
+            io.sockets.sockets[robot.id].emit('server:gameover', robot.winner)
         })
       } else {
         game.distributeCards();
@@ -174,7 +173,13 @@ io.sockets.on('connection', socket => {
   })
 
   isGameOver = function() {
-    return game.currentTurn >= 10;
+    let yes = false
+    _.each(game.robots, robot => {
+      if (robot.winner) {
+        yes = true
+      }
+    })
+    return yes;
   }
 
   runProgram = function() {
