@@ -33,7 +33,7 @@ module.exports = class Deck {
     }
 
     addCards(cards) {
-        this.cards.push(cards)
+        this.cards.push.apply(this.cards, cards)
         this.cards = _.flatten(_.shuffle(this.cards))
     }
 }
