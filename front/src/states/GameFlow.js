@@ -19,7 +19,7 @@ export default class extends Phaser.State {
 
     create() {
         this.map.create()
-        this.robot
+
         window.game.add.text(40, 40, 'Resolving game flow...', {
             font: "24px Arial",
             fill: "#ffffff",
@@ -63,7 +63,6 @@ export default class extends Phaser.State {
                         this.map.displayLaser(robot)
                         break;
                 }
-                this.robot = robot
                 this.indexFlow++;
             }
             else {
@@ -94,7 +93,8 @@ export default class extends Phaser.State {
     }
 
     stepover() {
-        window.socket.emit('client:stepover', this.robot)
-        console.info('client:stepover')
+        let text = 'client:stepover sent by ' + game.robot.id
+        window.socket.emit('client:stepover', game.robot)
+        console.info(text)
     }
 }

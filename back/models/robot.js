@@ -17,9 +17,10 @@ module.exports = class Robot {
         this.program = []
         this.compiled = false
         this.types = new Types()
-        this.animation = 0
+        this.animationEnded = false 
         this.felt = false
         this.winner = false
+
     }
 
     moveXSteps(steps) {

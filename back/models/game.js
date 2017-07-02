@@ -61,13 +61,38 @@ module.exports = class Game {
         }
         return false;
     }
+
+    filterCards(robot) {
+        let diff = []
+        _.each(robot.cards, card => {
+            let isNotInProgram = true
+            _.each(robot.program, program => {
+                if (card.id == program.id) {
+                  isNotInProgram = false
+                }
+            })
+            if (isNotInProgram) {
+                diff.push(card)
+            }
+        })
+        return diff
+    }
+
     distributeCards(){
-        _.each(this.robots, robot => {
+        _.each(this.robots, robot =>
+            robot.cards = this.filterCards(robot)
             robot.cards = this.deck.completeCards(robot.cards)
             this.deck.addCards(robot.program)
             robot.program = []
         })
     }
+
+    setRobotAnimationEnded(robotId) {
+        let robot = this.getRobot(robotId)
+        robot.animationEnded = true
+        return _.every(this.robots, r => r.animationEnded)
+    }
+
     setRobotCompiled(robotId) {
         let robot = this.getRobot(robotId)
         robot.compiled = true
