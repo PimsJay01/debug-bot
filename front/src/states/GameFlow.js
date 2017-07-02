@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 
 import Map from '../map'
 
+import { res } from '../res'
+
 import _ from 'underscore'
 
 export default class extends Phaser.State {
@@ -14,12 +16,13 @@ export default class extends Phaser.State {
         this.stage.backgroundColor = '#FF0000'
         this.stage.disableVisibilityChange = true
         this.map = new Map()
+        game.load.audio('laserSound', res.sounds.laser);
 
     }
 
     create() {
         this.map.create()
-
+        this.laserSound = game.add.audio('laserSound')
         window.game.add.text(40, 40, 'Resolving game flow...', {
             font: "24px Arial",
             fill: "#ffffff",
@@ -60,6 +63,7 @@ export default class extends Phaser.State {
                         robot.health--
                         break;
                     case 9 : // laser fire
+                        this.laserSound.play()
                         this.map.displayLaser(robot)
                         break;
                 }

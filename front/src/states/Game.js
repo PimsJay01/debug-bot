@@ -31,7 +31,8 @@ export default class extends Phaser.State {
         game.load.image('move3', res.images.move3)
 
         game.load.audio('musicGame', res.sounds.musicGame);
-
+        //game.load.audio('winSound', res.sounds.win);
+        game.load.audio('cardSound', res.sounds.card);
 
         game.load.image('avatar_silhouette', res.images.avatar_silhouette) //
         game.load.image('avatar_lavander', res.images.avatar_lavander) //
@@ -46,11 +47,15 @@ export default class extends Phaser.State {
       //game.robot.avatarId
 
         if(!musicPlaying){
-          music = game.add.audio('musicGame');
-          music.play();
+          music = game.add.audio('musicGame')
+          music.play()
           music.loopFull()
           musicPlaying = true
         }
+
+        this.cardSound = game.add.audio('cardSound')
+        //this.winSound = game.add.audio('winSound')
+
 
         this.map.create()
 
@@ -158,6 +163,7 @@ export default class extends Phaser.State {
     }
 
     cardClick(child) {
+        this.cardSound.play()
         if(game.robot.program.length < 5) {
             let card = game.robot.cards[child.index]
             game.robot.cards.splice(child.index, 1);
@@ -205,6 +211,7 @@ export default class extends Phaser.State {
     }
 
     lineClick(child) {
+        this.cardSound.play()
         let line = game.robot.program[child.index]
         game.robot.program.splice(child.index, 1);
         game.robot.cards.push(line)
