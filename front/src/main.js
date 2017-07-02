@@ -32,7 +32,12 @@ const MSG_TYPE_CLIENT_JOIN_GAME = 'client:join_game';
 const MSG_TYPE_SERVER_GAMES = 'server:games';
 const MSG_TYPE_SERVER_GAME_PPL_UPD= 'server:game:pplupd';
 const MSG_TYPE_SERVER_GAME_CARDS= 'server:game:cards';
+const MSG_TYPE_SERVER_GAME_PLAY= 'server:game:play';
+const MSG_TYPE_SERVER_GAME_END= 'server:game:end';
 const MSG_TYPE_SERVER_ERROR = 'server:error';
+const MSG_TYPE_CLIENT_GAME_DECK_CHG = 'client:game:program';
+const MSG_TYPE_CLIENT_GAME_DECK_RDY = 'client:game:compile';
+const MSG_TYPE_CLIENT_GAME_END_TURN = 'client:game:stepover';
 
 var avatarList = [
     {
@@ -144,7 +149,8 @@ window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
 )
 
 window.socket.on(MSG_TYPE_SERVER_GAME_CARDS, ({ game, robot }) => {
-    console.log('update game list');
+    console.log('received cards, game is starting....');
+    console.log(game);
     window.game.datas = game;
     window.game.robot = robot;
     window.game.state.start('Game');
@@ -155,16 +161,14 @@ window.socket.on(MSG_TYPE_SERVER_ERROR, (message) => {
     window.alert(message);
 })
 
-window.socket.on('server:runProgram', (flow) => {
-  console.info('server:runProgram', { flow })
+window.socket.on(MSG_TYPE_SERVER_GAME_PLAY, (flow) => {
 
   window.game.flow = flow
   window.game.state.start('GameFlow')
 
 })
 
-window.socket.on('server:gameover', (youwon) => {
-    console.info('server:gameover')
+window.socket.on(MSG_TYPE_SERVER_GAME_END, (youwon) => {
     window.game.youwon = youwon
     window.game.state.start('GameOver')
 })

@@ -44,7 +44,12 @@ module.exports = class Game {
             robot.initialPosition = Object.assign({},initalPositions[this.robots.length]);
             this.robots.push(robot);
             this.started = this.robots.length >= this.maxPlayers;
-            Server.gameUpdatePlayerList(this);
+            if (this.started) {
+                //this.deadline = moment().add(config.gameTime, 'seconds')
+                this.distributeCards();
+            }
+            Server.addRobotToGameRoom(robot, this);
+
             return true;
         }
         return false;
@@ -75,11 +80,17 @@ module.exports = class Game {
             robot.program = []
         })
     }
-    setRobotCompiled(robotId) {
-        let robot = this.getRobot(robotId)
-        robot.compiled = true
-        return _.every(this.robots, robot => robot.compiled)
+    setRobotReady(robotId) {
+        let robot = this.getRobot(robotId);
+        robot.ready = true;
+        // if all robots ready, we start game
+        if (_.every(this.robots, robot => robot.ready)){
+            this.currentTurn ++;
+            Server.gameSendCommands(this, this.resolveTurn());
+        }
+
     }
+
 
     // Sorted programs by priorities for each tour
     getProgramsSorted() {
@@ -92,7 +103,6 @@ module.exports = class Game {
             'line' : robot.program[index]
           })
         })
-        console.info('DEBUG : ', temp)
         sortedPrograms.push(_.sortBy(temp, step => {
           return -step.line.priority
         }))
@@ -105,7 +115,6 @@ module.exports = class Game {
       let commands = []
       let index = 0
       let nbStep = 0
-      console.info("RESOLVE TURN : ", this.currentTurn);
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
         if (!robot.felt) {
@@ -130,28 +139,22 @@ module.exports = class Game {
               break
             case this.types.CardType.MOVE_1:
               nbStep = this.tryMove(robot, 1)
-              console.info("de combien t'avance ", nbStep)
               robot.moveXSteps(nbStep)
               _.each(_.range(nbStep), index => {
-                  console.info(index, "/", nbStep)
                   commands.push(new Command(program.robotId, program.line.id, robot.direction))
               })
               break
             case this.types.CardType.MOVE_2:
               nbStep = this.tryMove(robot, 2)
-              console.info("de combien t'avance ", nbStep)
               robot.moveXSteps(nbStep)
               _.each(_.range(nbStep), index => {
-                  console.info(index, "/", nbStep)
                   commands.push(new Command(program.robotId, program.line.id, robot.direction))
               })
               break
             case this.types.CardType.MOVE_3:
               nbStep = this.tryMove(robot, 3)
-              console.info("de combien t'avance ", nbStep)
               robot.moveXSteps(nbStep)
               _.each(_.range(nbStep), index => {
-                  console.info(index, "/", nbStep)
                   commands.push(new Command(program.robotId, program.line.id, robot.direction))
               })
               break
@@ -169,7 +172,6 @@ module.exports = class Game {
         }
       })
       _.each(this.robots, robot => {
-        console.log(robot.id, robot.felt ? "je suis tombé" : "je suis toujours là")
         if (robot.felt) {
           robot.felt = false
           robot.position = Object.assign({}, robot.initialPosition)
@@ -196,7 +198,6 @@ module.exports = class Game {
     isInTheMap(pos) {
       let height = this.board[0].length
       let width = this.board.length
-      console.info("board size : ", width, "x", height, " ; testing pos : ", pos)
       if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height) {
         return true
       }
@@ -271,7 +272,6 @@ module.exports = class Game {
             pos = Object.assign({}, newPos)
           }
           if (this.hasFallen(pos)) {
-            console.info("pos ", pos, " is outside of the map")
             if(!trueRobot.felt) {
                 trueRobot.felt = true
                 nbStepFall = nbStep
@@ -312,7 +312,6 @@ function initBoard() {
             temp[x][y] = getBox(board.data[(y*3)][x], board.data[(y*3)+1][x], board.data[(y*3)+2][x])
         }
     }
-    console.info('board', temp)
     return temp;
 }
 

@@ -4,6 +4,9 @@ import Map from '../map'
 
 import _ from 'underscore'
 
+
+const MSG_TYPE_CLIENT_GAME_END_TURN = 'client:game:stepover';
+
 export default class extends Phaser.State {
 
     init() {
@@ -87,7 +90,6 @@ export default class extends Phaser.State {
     }
 
     stepover() {
-        window.socket.emit('client:stepover', this.robot)
-        console.info('client:stepover')
+        window.socket.emit(MSG_TYPE_CLIENT_GAME_END_TURN, this.robot)
     }
 }

@@ -9,6 +9,10 @@ import moment from 'moment'
 var musicPlaying = false
 var music
 
+
+const MSG_TYPE_CLIENT_GAME_DECK_CHG = 'client:game:program';
+const MSG_TYPE_CLIENT_GAME_DECK_RDY = 'client:game:compile';
+
 export default class extends Phaser.State {
 
     init() {
@@ -36,12 +40,12 @@ export default class extends Phaser.State {
 
     create() {
 
-        if(!musicPlaying){
+        /*if(!musicPlaying){
           music = game.add.audio('musicGame');
           music.play();
           music.loopFull()
           musicPlaying = true
-        }
+        }*/
 
         this.map.create()
 
@@ -265,8 +269,7 @@ export default class extends Phaser.State {
     btnRunClick() {
         this.btnRun.inputEnabled = false
 
-        window.socket.emit('client:compile')
-        console.info('client:compile')
+        window.socket.emit(MSG_TYPE_CLIENT_GAME_DECK_RDY)
 
         _.each(this.cards, card => {
             card.getAt(0).tint = 0x7F7F7F
@@ -287,8 +290,7 @@ export default class extends Phaser.State {
     }
 
     emitProgram() {
-        window.socket.emit('client:program', game.robot.program)
-        console.info('client:program')
+        window.socket.emit(MSG_TYPE_CLIENT_GAME_DECK_CHG, game.robot.program)
 
         // this.clearTexts()
         this.refresh()
