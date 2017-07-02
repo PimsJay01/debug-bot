@@ -346,7 +346,7 @@ function getBox(line1, line2, line3) {
         return new Box(types.BoxType.HOLE, walls)
     // objective
     if(line2.includes("00"))
-        return new Box(types.BoxType.OBJECTIVE, walls)
+        return new Box(types.BoxType.TARGET, walls)
     // start 1
     if(line2.includes("01"))
         return new Box(types.BoxType.START_1, walls)

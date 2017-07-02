@@ -16,6 +16,7 @@ export const res = {
     },
     tiles : {
         default : tiles + '001.png',
+        target : tiles + '002.png',
         travelatorWE : tiles + '005.png',
         travelatorNS : tiles + '006.png',
         travelatorEW : tiles + '007.png',
@@ -24,6 +25,10 @@ export const res = {
         start2 : tiles + '012.png',
         start3 : tiles + '013.png',
         start4 : tiles + '014.png',
+        wallN : tiles + 'wall_north.png',
+        wallE : tiles + 'wall_east.png',
+        wallS : tiles + 'wall_south.png',
+        wallW : tiles + 'wall_west.png',
         robot1n : tiles + 'robot_1_north.png',
         robot1e : tiles + 'robot_1_east.png',
         robot1s : tiles + 'robot_1_south.png',

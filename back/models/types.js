@@ -24,7 +24,7 @@ module.exports = class Types {
           TRAVELATOR_N_S : 7,
           TRAVELATOR_E_W : 8,
           HOLE : 9,
-          OBJECTIVE : 10
+          TARGET : 10
         }
 
         this.CardType = {
