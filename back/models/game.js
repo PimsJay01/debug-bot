@@ -163,6 +163,9 @@ module.exports = class Game {
           robot.position = Object.assign({}, robot.initialPosition)
           robot.direction = this.types.MovementType.EAST
         }
+        if (this.hasWon(robot.position)) {
+          robot.winner = true
+        }
       })
       return commands;
     }
@@ -260,6 +263,13 @@ module.exports = class Game {
         }
       })
       return res
+    }
+
+    hasWon(pos) {
+      if (this.board[pos.x][pos.y].type == this.types.BoxType.TARGET) {
+        return true
+      }
+      return false
     }
 }
 
