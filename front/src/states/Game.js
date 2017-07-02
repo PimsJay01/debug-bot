@@ -6,6 +6,9 @@ import Map from '../map'
 import _ from 'underscore'
 import moment from 'moment'
 
+var musicPlaying = false
+var music
+
 export default class extends Phaser.State {
 
     init() {
@@ -28,14 +31,17 @@ export default class extends Phaser.State {
         game.load.image('move3', res.images.move3)
 
         game.load.audio('musicGame', res.sounds.musicGame);
+
     }
 
     create() {
 
-        this.music = game.add.audio('musicGame');
-
-        this.music.play();
-        this.music.loop = true
+        if(!musicPlaying){
+          music = game.add.audio('musicGame');
+          music.play();
+          music.loopFull()
+          musicPlaying = true
+        }
 
         this.map.create()
 
