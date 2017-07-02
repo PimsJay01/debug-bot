@@ -44,7 +44,10 @@ module.exports = class Game {
         return false
     }
     removeRobot(id) {
-        this.deck.addCards(this.getRobot(id).cards)
+        let robot = this.getRobot(id)
+        if(robot != null) {
+            this.deck.addCards(robot.cards)
+        }
         this.robots = _.filter(this.robots, robot => robot.id != id)
     }
     getRobot(id){
