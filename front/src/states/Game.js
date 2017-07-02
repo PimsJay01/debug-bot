@@ -54,7 +54,7 @@ export default class extends Phaser.State {
           music.play();
           music.loopFull()
           musicPlaying = true
-        }*/
+        }
 
         this.map.create()
 

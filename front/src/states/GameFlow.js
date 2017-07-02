@@ -97,7 +97,7 @@ export default class extends Phaser.State {
 
     stepover() {
         let text = 'client:stepover sent by ' + game.robot.id
-        window.socket.emit('client:stepover', game.robot)
+        window.socket.emit(MSG_TYPE_CLIENT_GAME_END_TURN, game.robot)
         console.info(text)
     }
 }

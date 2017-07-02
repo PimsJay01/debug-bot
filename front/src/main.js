@@ -41,14 +41,9 @@ const MSG_TYPE_CLIENT_GAME_END_TURN = 'client:game:stepover';
 
 var avatarList = [
     {
-<<<<<<< HEAD
-        name : false,
-        src : "./assets/images/avatar_fluffy.png"
-=======
         selected : false,
         src : "./assets/images/avatar_fluffy.png",
         name : "Fluf" //modif
->>>>>>> master
     },
     {
         selected : false,
@@ -140,10 +135,15 @@ window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
             img.src = avatarList[game.robots[i].avatarId].src;
             img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
             var li = document.createElement('li');
+            var playerDetails = document.createElement('div');
+            var playerAvatarName = document.createElement('div');
             var playerName = document.createElement('div');
             playerName.innerHTML = game.robots[i].name;
-            playerName.style.marginRight = '10px';
-            playerName.style.marginLeft = '5px';
+            playerName.style = "font-weight: bold";
+            playerAvatarName.innerHTML = avatarList[game.robots[i].avatarId].name;
+            playerAvatarName.style = "color: darkgrey";
+            playerDetails.style.marginRight = '10px';
+            playerDetails.style.marginLeft = '5px';
             li.style.marginTop = '5px';
             li.style.border = '2px solid ' + game.robots[i].fill;
             li.style.display = 'flex';
@@ -152,7 +152,9 @@ window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
             li.style.backgroundColor = 'rgba(' + parseInt(game.robots[i].fill.substring(1,3), 16) + ',' + parseInt(game.robots[i].fill.substring(3,5), 16) +',' + parseInt(game.robots[i].fill.substring(5,7), 16) + ', 0.6)';
             document.getElementById("inGamePlayerList").appendChild(li);
             li.appendChild(img);
-            li.appendChild(playerName);
+            li.appendChild(playerDetails);
+            playerDetails.appendChild(playerName);
+            playerDetails.appendChild(playerAvatarName);
         }
         document.getElementById('lobby').style.display = "none";
         document.getElementById('game').style.display = "flex";

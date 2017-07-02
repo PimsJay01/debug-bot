@@ -181,6 +181,7 @@ io.sockets.on('connection', socket => {
   })
 
   socket.on(MSG_TYPE_CLIENT_GAME_END_TURN, (newRobot) => {
+      console.info('stepover received from client from : ' + newRobot.id);
       var game;
         _.each(socket.rooms, room => {
             if (typeof getGame(room) != 'undefined'){
@@ -188,7 +189,8 @@ io.sockets.on('connection', socket => {
             }
         })
       
-      let robot = _.find(game.robots, robot => robot.id == newRobot.id)
+      //let robot = _.find(game.robots, robot => robot.id == newRobot.id)
+      
       if (isGameOver(game)) {
         _.each(game.robots, robot => {
             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_END, robot.winner)
@@ -197,7 +199,7 @@ io.sockets.on('connection', socket => {
         if (game.setRobotAnimationEnded(newRobot.id)) {
           game.distributeCards();
           _.each(game.robots, robot => {
-              robot.compiled = false
+              robot.ready = false
               robot.animationEnded = false
              io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
           })
