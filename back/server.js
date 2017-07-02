@@ -9,13 +9,10 @@ var config = require('./config')
 
 // Models
 var Robot = require('./models/robot')
-var Card = require('./models/card')
 var Box = require('./models/box')
 var Game = require('./models/game')
 
 var game = new Game()
-
-var cards = []
 
 // Loading stdin read
 const readline = require('readline');
@@ -92,8 +89,7 @@ io.sockets.on('connection', socket => {
       console.info('client:compile')
       console.info('client:id', socket.id)
 
-      game.getRobot(socket.id).compiled = true
-      if(game.areRobotsCompiled()) {
+      if(game.setRobotCompiled(socket.id)) {
           game.currentTurn ++
           console.info('currentTurn : ', game.currentTurn)
           runProgram()
@@ -110,7 +106,6 @@ io.sockets.on('connection', socket => {
       } else {
         game.distributeCards();
         _.each(game.robots, robot => {
-            robot.program = []
             robot.compiled = false
             console.info('server:cards', robot.id)
             console.info("server:cards: ", robot.id, " ; ", robot.position, " ; ", robot.direction)

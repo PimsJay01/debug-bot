@@ -3,7 +3,7 @@ var _ = require('underscore')
 var config = require('./../config')
 
 var Box = require('./box')
-var Card = require('./card')
+var Deck = require('./deck')
 var Command = require('./../models/command')
 var Types = require('./../models/types')
 var Robot = require('./../models/robot')
@@ -23,7 +23,7 @@ module.exports = class Game {
         this.robots = []
         this.board = initBoard()
         this.started = false
-        this.deck = buildCardDeck()
+        this.deck = new Deck()
         this.currentTurn = 0
         this.types = new Types()
         this['maxPlayers'] = config.maxPlayers;
@@ -63,14 +63,14 @@ module.exports = class Game {
     }
     distributeCards(){
         _.each(this.robots, robot => {
-            while (robot.cards.length < config.robotMaxCards){
-                var cardSelected = this.deck[_.random(this.deck.length-1)];
-                robot.cards.push(cardSelected);
-                this.deck = _.filter(this.deck, function(card){ return card != cardSelected});
-            }
+            robot.cards = this.deck.completeCards(robot.cards)
+            this.deck.addCards(robot.program)
+            robot.program = []
         })
     }
-    areRobotsCompiled() {
+    setRobotCompiled(robotId) {
+        let robot = this.getRobot(robotId)
+        robot.compiled = true
         return _.every(this.robots, robot => robot.compiled)
     }
 
@@ -268,8 +268,6 @@ module.exports = class Game {
         return Math.min(nbStep, nbStepFall)
     }
 
-
-
     getRobotById(robotId) {
       let res
       _.each(this.robots, robot => {
@@ -287,33 +285,6 @@ module.exports = class Game {
       return false
     }
 }
-
-function buildCardDeck(){
-      let types = new Types()
-      var gameDeck = [];
-      for (var i = 0; i < types.CardTypeRange.U_TURN.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.U_TURN, types.CardTypeRange.U_TURN[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.ROTATE_LEFT.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.ROTATE_LEFT,types.CardTypeRange.ROTATE_LEFT[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.ROTATE_RIGHT.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.ROTATE_RIGHT,types.CardTypeRange.ROTATE_RIGHT[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.BACK_UP.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.BACK_UP,types.CardTypeRange.BACK_UP[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.MOVE_1.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_1,types.CardTypeRange.MOVE_1[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.MOVE_2.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_2,types.CardTypeRange.MOVE_2[i]));
-      }
-      for (var i = 0; i < types.CardTypeRange.MOVE_3.length; i++) {
-          gameDeck.push(new Card(gameDeck.length,types.CardType.MOVE_3,types.CardTypeRange.MOVE_3[i]));
-      }
-      return gameDeck;
-  }
 
 function initBoard() {
     let board = require("../boards/" + config.boardId)
