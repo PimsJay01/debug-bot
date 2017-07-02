@@ -181,7 +181,9 @@ module.exports = class Game {
     }
 
     hasFallen(pos) {
-      return !this.isInTheMap(pos)
+      console.info("hasFallen:position ", pos)
+      console.info("hasFallen:boardType ", this.board[pos.x][pos.y].type)
+      return ((this.board[pos.x][pos.y].type == this.types.BoxType.HOLE) || !this.isInTheMap(pos))
     }
 
     boxFree(pos) {
