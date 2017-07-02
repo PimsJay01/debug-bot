@@ -20,6 +20,8 @@ const Type = {
 export default class {
 
     constructor () {
+        game.load.image('background', res.images.background)
+
         game.load.image('default', res.tiles.default)
         game.load.image('start1', res.tiles.start1)
         game.load.image('start2', res.tiles.start2)
@@ -45,6 +47,13 @@ export default class {
     create() {
         this.width = 172
         this.height = 128
+
+        let background = game.add.image(0, 0, 'background')
+
+        //background.x = 0
+        //background.y = 0
+        background.height = game.height
+        background.widht = game.width
 
         this.map = game.add.group()
 

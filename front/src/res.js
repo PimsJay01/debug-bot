@@ -1,18 +1,20 @@
 var sprites = 'sprites/';
 var images = '../assets/images/';
 var tiles = '../assets/tiles/';
+var sounds = '../assets/sounds/'
 
 export const res = {
     images : {
         readyBtn : images + 'mushroom2.png',
+        background : images + 'space1.jpg',
         card : images + 'card.png',
         uTurn : images + 'uTurn.jpg',
         rotateL : images + 'rotateL.jpg',
         rotateR : images + 'rotateR.jpg',
         backUp : images + 'backUp.jpg',
-        move1 : images + 'Move1.jpg',
-        move2 : images + 'Move2.jpg',
-        move3 : images + 'Move3.jpg'
+        move1 : images + 'move1.jpg',
+        move2 : images + 'move2.jpg',
+        move3 : images + 'move3.jpg'
     },
     tiles : {
         default : tiles + '001.png',
@@ -33,5 +35,8 @@ export const res = {
         robot1e : tiles + 'robot_1_east.png',
         robot1s : tiles + 'robot_1_south.png',
         robot1w : tiles + 'robot_1_west.png'
+    },
+    sounds : {
+        musicGame : [sounds+'musicGame2.mp3', sounds+'musicGame2.ogg']
     }
 }

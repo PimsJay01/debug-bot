@@ -26,7 +26,6 @@ class Game extends Phaser.Game {
   }
 }
 
-
 const MSG_TYPE_CLIENT_INFOS = 'client:infos';
 const MSG_TYPE_CLIENT_NEW_GAME = 'client:new_game';
 const MSG_TYPE_CLIENT_JOIN_GAME = 'client:join_game';
@@ -34,7 +33,6 @@ const MSG_TYPE_SERVER_GAMES = 'server:games';
 const MSG_TYPE_SERVER_GAME_PPL_UPD= 'server:game:pplupd';
 const MSG_TYPE_SERVER_GAME_CARDS= 'server:game:cards';
 const MSG_TYPE_SERVER_ERROR = 'server:error';
-
 
 var avatarList = [
     {

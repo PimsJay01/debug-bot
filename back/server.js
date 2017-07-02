@@ -9,7 +9,6 @@ var config = require('./config')
 
 // Models
 var Robot = require('./models/robot')
-var Card = require('./models/card')
 var Box = require('./models/box')
 var Game = require('./models/game')
 var Robot = require('./models/robot')
@@ -149,8 +148,7 @@ io.sockets.on('connection', socket => {
 
   socket.on('client:compile', () => {
 
-      game.getRobot(socket.id).compiled = true
-      if(game.areRobotsCompiled()) {
+      if(game.setRobotCompiled(socket.id)) {
           game.currentTurn ++
           runProgram()
       }
@@ -165,7 +163,6 @@ io.sockets.on('connection', socket => {
       } else {
         game.distributeCards();
         _.each(game.robots, robot => {
-            robot.program = []
             robot.compiled = false
             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
         })
