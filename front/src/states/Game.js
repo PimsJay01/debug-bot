@@ -36,17 +36,12 @@ export default class extends Phaser.State {
 
     create() {
 
-
-        //this.music = game.add.audio('musicGame');
-        //this.music.play();
-        //this.music.loop = true
         if(!musicPlaying){
           music = game.add.audio('musicGame');
           music.play();
-          music.loop = true
+          music.loopFull()
           musicPlaying = true
         }
-
 
         this.map.create()
 

@@ -176,11 +176,14 @@ module.exports = class Game {
     }
 
     travelator(pos) {
-      let res = this.board[pos.x][pos.y].type - 5
-      if (res < 0 || res > 4) {
-        res = this.types.MovementType.STAY
+      if(this.isInTheMap(pos)){
+        let res = this.board[pos.x][pos.y].type - 5
+        if (res < 0 || res > 4) {
+          res = this.types.MovementType.STAY
+        }
+        return res
       }
-      return res
+      return this.types.MovementType.STAY
     }
 
     isInTheMap(pos) {
@@ -195,7 +198,7 @@ module.exports = class Game {
 
     hasFallen(pos) {
       if(!this.isInTheMap(pos)){
-        return false;
+        return true;
       }
       return (this.board[pos.x][pos.y].type == this.types.BoxType.HOLE)
     }
