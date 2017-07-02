@@ -117,7 +117,7 @@ window.gameSelected = function(event){
 
 window.game = new Game()
 
-window.socket = io(`http://localhost:7777`);
+window.socket = io('http://localhost:7777');
 
 
 window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
@@ -160,7 +160,7 @@ window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
         document.getElementById('game').style.display = "flex";
         window.game.state.start('Waiting');
     }
-    
+
 )
 
 window.socket.on(MSG_TYPE_SERVER_GAME_CARDS, ({ game, robot }) => {
@@ -198,7 +198,7 @@ function displayGameList(games){
     //clearing game list
     htmlGameList.innerHTML = '';
     for (var i = 0; i < games.length; i++) {
-        
+
         var motherDiv = document.createElement('div');
         var gameNameDiv = document.createElement('div');
         var playersDiv = document.createElement('div');
