@@ -223,16 +223,16 @@ font-weight:700
                 <img id="close" src="./assets/images/close_cross.png" onclick ="document.getElementById('popupContact').style.display = 'none'">
                 <h2>Customize game settings</h2>
                 <hr>
-                <input id="name" name="name" placeholder="Name" type="text">
+                <input id="gameName" name="name" placeholder="Name" type="text">
                 <br></br>
                 Amount of players
-                <select name="amount of Players">
+                <select id="newPlayersAmount" name="amount of Players">
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                 </select>
                 <br></br>
-                <button id="createButton" onclick="window.hostGame">Create some fun !</button>
+                <button id="createButton" onclick="window.hostGame()">Create some fun !</button>
             </div>
         </div>
         <!-- Popup Div Ends Here -->

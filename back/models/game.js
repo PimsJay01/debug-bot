@@ -19,25 +19,27 @@ const initalColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFFFF]
 const initalFills = ['#ff0000', '#00ff00', '#0000ff', '#ffffff']
 
 module.exports = class Game {
-    constructor() {
-        this.robots = []
+    constructor(id, name, maxPlayers) {
+        this.id = id
+        this.name = name
+        this.robots = [];
         this.board = initBoard()
         this.started = false
         this.deck = buildCardDeck()
         this.currentTurn = 0
         this.types = new Types()
-        this['maxPlayers'] = config.maxPlayers;
+        this.maxPlayers = maxPlayers;
     }
     isStarted() {
         return this.started
     }
     addRobot(robot) {
-        if(this.robots.length < config.maxPlayers) {
+        if(this.robots.length < this.maxPlayers) {
             robot.color = initalColors[this.robots.length]
             robot.fill = initalFills[this.robots.length]
             robot.position = initalPositions[this.robots.length]
             this.robots.push(robot)
-            this.started = this.robots.length >= config.maxPlayers
+            this.started = this.robots.length >= this.maxPlayers
             return true
         }
         return false

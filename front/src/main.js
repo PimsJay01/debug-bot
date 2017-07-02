@@ -27,6 +27,13 @@ class Game extends Phaser.Game {
 }
 
 
+const MSG_TYPE_CLIENT_INFOS = 'client:infos';
+const MSG_TYPE_CLIENT_NEW_GAME = 'client:new_game';
+const MSG_TYPE_CLIENT_JOIN_GAME = 'client:join_game';
+const MSG_TYPE_SERVER_GAMES = 'server:games';
+const MSG_TYPE_SERVER_GAME_PPL_UPD= 'server:game:pplupd';
+const MSG_TYPE_SERVER_GAME_CARDS= 'server:game:cards';
+/*
 var gameList = [
     {
         id: 100,
@@ -52,7 +59,7 @@ var gameList = [
         nbPlayers : 2,
         maxPlayers : 4
     }
-]
+]*/
 
 var avatarList = [
     {
@@ -103,7 +110,10 @@ window.robotSelected = function(event){
 }
 
 window.hostGame = function(){
-    
+    var gameName = document.getElementById("gameName").value;
+    var e = document.getElementById("newPlayersAmount");
+    var gamePlayersAmount = e[e.selectedIndex].value;
+    window.socket.emit(MSG_TYPE_CLIENT_NEW_GAME, {name:gameName, playersAmount:gamePlayersAmount});
 }
 
 window.gameSelected = function(event){
@@ -124,8 +134,8 @@ window.game = new Game()
 window.socket = io(`http://localhost:7777`);
 
 
-window.socket.on('server:game:pplupd', ({ game, robot }) => {
-    console.info('server:game:pplupd', { game, robot })
+window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game, robot}) => {
+    console.info(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot })
     window.game.datas = game
     window.game.robot = robot
     document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
@@ -151,11 +161,13 @@ window.socket.on('server:game:pplupd', ({ game, robot }) => {
         li.appendChild(img);
         li.appendChild(playerName);
     }
+    document.getElementById('lobby').style.display = "none";
+    document.getElementById('game').style.display = "flex";
     window.game.state.start('Waiting')
 })
 
-window.socket.on('server:cards', ({ game, robot }) => {
-    console.info('server:cards', { game, robot })
+window.socket.on(MSG_TYPE_SERVER_GAME_CARDS, ({ game, robot }) => {
+    console.info(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
     window.game.datas = game
     window.game.robot = robot
     window.game.state.start('Game')
@@ -176,15 +188,17 @@ window.socket.on('server:gameover', (youwon) => {
     window.game.state.start('GameOver')
 })
 
-window.socket.on('server:gameList', (games) => {
-    console.info('server:gameList', { games })
+window.socket.on(MSG_TYPE_SERVER_GAMES, (games) => {
+    console.info(MSG_TYPE_SERVER_GAMES, games )
     displayGameList(games);
 })
 
 function displayGameList(games){
-    games = gameList;
     var htmlGameList = document.getElementById('gameList');
+    //clearing game list
+    htmlGameList.innerHTML = '';
     for (var i = 0; i < games.length; i++) {
+        
         var motherDiv = document.createElement('div');
         var gameNameDiv = document.createElement('div');
         var playersDiv = document.createElement('div');
@@ -193,7 +207,7 @@ function displayGameList(games){
         motherDiv.className = "flexbox";
         motherDiv.onclick = window.gameSelected;
         gameNameDiv.innerHTML = games[i].name;
-        playersDiv.innerHTML = games[i].nbPlayers + '/' + games[i].maxPlayers + ' Players';
+        playersDiv.innerHTML = games[i].robots.length + '/' + games[i].maxPlayers + ' Players';
         htmlGameList.appendChild(motherDiv);
         motherDiv.appendChild(gameNameDiv);
         motherDiv.appendChild(playersDiv);
@@ -211,16 +225,19 @@ window.emitName = function() {
             avatarSelected = i;
         }
     }
-    window.socket.emit('client:infos', {name:pseudo,avatarId:avatarSelected});
+    window.socket.emit(MSG_TYPE_CLIENT_INFOS, {name:pseudo,avatarId:avatarSelected});
     document.getElementById('welcome').style.display = "none";
     document.getElementById('lobby').style.display = "flex";
-
-
-    //TODO remove
-    displayGameList(1);
 }
 
 window.joinGame = function (){
-    document.getElementById('lobby').style.display = "none";
-    document.getElementById('game').style.display = "flex";
+
+    var htmlGameList = document.getElementById('gameList').childNodes;
+    var gameId
+    for (var i = 0; i < htmlGameList.length; i++) {
+        if (htmlGameList[i].className == "flexbox gameSelected") {
+            gameId = htmlGameList[i].id;
+        }
+    }
+    window.socket.emit(MSG_TYPE_CLIENT_JOIN_GAME, gameId);
 }
