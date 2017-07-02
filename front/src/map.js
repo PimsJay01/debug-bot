@@ -49,8 +49,9 @@ export default class {
         this.height = 128
 
         let background = game.add.image(0, 0, 'background')
-        background.x = 0
-        background.y = 0
+
+        //background.x = 0
+        //background.y = 0
         background.height = game.height
         background.widht = game.width
 
