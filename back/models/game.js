@@ -102,7 +102,6 @@ module.exports = class Game {
     }
 
 
-<<<<<<< HEAD
     setRobotReady(robotId) {
         let robot = this.getRobot(robotId);
         robot.ready = true;
@@ -113,8 +112,6 @@ module.exports = class Game {
         }
     }
 
-=======
->>>>>>> master
     setRobotAnimationEnded(robotId) {
         let robot = this.getRobot(robotId)
         robot.animationEnded = true
