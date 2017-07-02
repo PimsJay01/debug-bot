@@ -26,7 +26,6 @@ class Game extends Phaser.Game {
   }
 }
 
-
 var avatarList = [
     {
         selected : false,
