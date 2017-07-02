@@ -63,8 +63,12 @@ module.exports = class Game {
     }
     distributeCards(){
         _.each(this.robots, robot => {
+            console.info(robot.program)
+            robot.cards = _.filter(robot.cards, card => !_.contains(robot.program, card))
+            console.info(robot.cards)
             robot.cards = this.deck.completeCards(robot.cards)
             this.deck.addCards(robot.program)
+            console.info(robot.program)
             robot.program = []
         })
     }
