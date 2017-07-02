@@ -44,6 +44,7 @@ module.exports = class Game {
         return false
     }
     removeRobot(id) {
+        this.deck.addCards(this.getRobot(id).cards)
         this.robots = _.filter(this.robots, robot => robot.id != id)
     }
     getRobot(id){
@@ -85,7 +86,9 @@ module.exports = class Game {
             this.deck.addCards(robot.program)
             robot.program = []
         })
+        console.info("DISTRIBUTE CARD, size of the deck after distribution : ", this.deck.cards.length);
     }
+
 
     setRobotAnimationEnded(robotId) {
         let robot = this.getRobot(robotId)
