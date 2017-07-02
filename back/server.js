@@ -3,7 +3,8 @@ var server = http.createServer()
 
 var _ = require('underscore')
 var moment = require('moment');
-var io = require('socket.io')(server, { origins: '*:*'}).listen(server)
+var io = require('socket.io').listen(server);
+io.origins('*:*');
 
 var config = require('./config')
 
