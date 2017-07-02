@@ -154,7 +154,7 @@ io.sockets.on('connection', socket => {
             // the robot could be added to the game
             // Hence, removing it fom lobby
             removeRobotFromLobby(robot.id);
-            
+
         } else{
             io.sockets.emit(MSG_TYPE_SERVER_ERROR, "Sorry, you were not able to join the game as it is full");
         }
@@ -188,9 +188,9 @@ io.sockets.on('connection', socket => {
                 game = getGame(room);
             }
         })
-      
+
       //let robot = _.find(game.robots, robot => robot.id == newRobot.id)
-      
+
       if (isGameOver(game)) {
         _.each(game.robots, robot => {
             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_END, robot.winner)
@@ -218,7 +218,7 @@ io.sockets.on('connection', socket => {
     return yes;
   }
 
-  
+
 
   // When client disconnect...
   socket.on('disconnect', () => {
@@ -240,4 +240,4 @@ io.sockets.on('connection', socket => {
 
 // setInterval(() => {}, 1000)
 
-server.listen(7777)
+server.listen(7778)
