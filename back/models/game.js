@@ -194,7 +194,10 @@ module.exports = class Game {
     }
 
     hasFallen(pos) {
-      return ((this.board[pos.x][pos.y].type == this.types.BoxType.HOLE) || !this.isInTheMap(pos))
+      if(!this.isInTheMap(pos)){
+        return false;
+      }
+      return (this.board[pos.x][pos.y].type == this.types.BoxType.HOLE)
     }
 
     boxFree(pos) {
@@ -279,8 +282,10 @@ module.exports = class Game {
     }
 
     hasWon(pos) {
-      if (this.board[pos.x][pos.y].type == this.types.BoxType.TARGET) {
-        return true
+      if(this.isInTheMap(pos)){
+        if (this.board[pos.x][pos.y].type == this.types.BoxType.TARGET) {
+          return true
+        }
       }
       return false
     }

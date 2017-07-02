@@ -1,6 +1,7 @@
 var sprites = 'sprites/';
 var images = '../assets/images/';
 var tiles = '../assets/tiles/';
+var sounds = '../assets/sounds/'
 
 export const res = {
     images : {
@@ -34,5 +35,8 @@ export const res = {
         robot1e : tiles + 'robot_1_east.png',
         robot1s : tiles + 'robot_1_south.png',
         robot1w : tiles + 'robot_1_west.png'
+    },
+    sounds : {
+        musicGame : [sounds+'musicGame2.mp3', sounds+'musicGame2.ogg']
     }
 }
