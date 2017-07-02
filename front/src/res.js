@@ -6,14 +6,15 @@ var sounds = '../assets/sounds/'
 export const res = {
     images : {
         readyBtn : images + 'mushroom2.png',
+        background : images + 'space1.jpg',
         card : images + 'card.png',
         uTurn : images + 'uTurn.jpg',
         rotateL : images + 'rotateL.jpg',
         rotateR : images + 'rotateR.jpg',
         backUp : images + 'backUp.jpg',
-        move1 : images + 'Move1.jpg',
-        move2 : images + 'Move2.jpg',
-        move3 : images + 'Move3.jpg'
+        move1 : images + 'move1.jpg',
+        move2 : images + 'move2.jpg',
+        move3 : images + 'move3.jpg'
     },
     tiles : {
         default : tiles + '001.png',
