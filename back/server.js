@@ -26,6 +26,7 @@ const MSG_TYPE_CLIENT_JOIN_GAME = 'client:join_game';
 const MSG_TYPE_SERVER_GAMES = 'server:games';
 const MSG_TYPE_SERVER_GAME_PPL_UPD= 'server:game:pplupd';
 const MSG_TYPE_SERVER_GAME_CARDS= 'server:game:cards';
+const MSG_TYPE_SERVER_ERROR = 'server:error';
 
 // Loading stdin read
 const readline = require('readline');
@@ -35,9 +36,17 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
+//Hereby, functions used by game to communicate with their players on own chanel
+
+exports.gameUpdatePlayerList = function (game) {
+    io.sockets.in(game.id).emit(MSG_TYPE_SERVER_GAME_PPL_UPD, { game });
+}
+
+
+
+
 // reset the global datastructures, put the server in initial state
 function reset(){
-    console.log('Server reset')
 
     // TODO Reset game
 }
@@ -75,6 +84,8 @@ function removeGame(id) {
 }
 
 
+
+
 // read and manage commands from stdin
 rl.on('line', input => {
     var command = input.trim()
@@ -87,24 +98,22 @@ rl.on('line', input => {
 })
 
 io.sockets.on('connection', socket => {
-    console.info('client:connect', socket.id)
     socket.on(MSG_TYPE_CLIENT_INFOS, client => {
 
-        console.log(MSG_TYPE_CLIENT_INFOS, client);
         addRobot(new Robot(socket.id, client.name, client.avatarId));
         io.sockets.sockets[socket.id].emit(MSG_TYPE_SERVER_GAMES, gamesNotStarted());
 
   })
 
   socket.on(MSG_TYPE_CLIENT_NEW_GAME, newGame => {
-        console.log(MSG_TYPE_CLIENT_INFOS, newGame);
         var robot = getRobot(socket.id);
         var game = new Game(socket.id, newGame.name, newGame.playersAmount);
+        //the game has the id of the first robot joining it
+        socket.join(game.id);
         game.addRobot(robot);
         removeRobot(robot.id);
         addGame(game);
         io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot });
-        console.log(game);
   })
 
 
@@ -119,42 +128,35 @@ io.sockets.on('connection', socket => {
                 io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot })
             })
             if(game.isStarted()) {
-                console.log('starting game...');
 
                 game.deadline = moment().add(config.gameTime, 'seconds')
                 game.distributeCards();
 
                 _.each(game.robots, robot => {
-                    console.info(MSG_TYPE_SERVER_GAME_CARDS, robot.id)
                     io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
                 })
             }
-        } // TODO game full message
+        } else{
+            io.sockets.emit(MSG_TYPE_SERVER_ERROR, "Sorry, you were not able to join the game as it is full");
+        }
   })
 
   socket.on('client:program', (program) => {
-      console.info('client:program', _.map(program, line => _.values(line)))
-      console.info('client:id', socket.id)
 
       let robot = game.getRobot(socket.id)
       robot.program = program
-      console.info('client:program(real)', robot.program)
   })
 
   socket.on('client:compile', () => {
-      console.info('client:compile')
-      console.info('client:id', socket.id)
 
       game.getRobot(socket.id).compiled = true
       if(game.areRobotsCompiled()) {
           game.currentTurn ++
-          console.info('currentTurn : ', game.currentTurn)
           runProgram()
       }
   })
 
   socket.on('client:stepover', (newRobot) => {
-      console.info('cient:stepover')
       let robot = _.find(game.robots, robot => robot.id == newRobot.id)
       if (isGameOver()) {
         _.each(game.robots, robot => {
@@ -165,8 +167,6 @@ io.sockets.on('connection', socket => {
         _.each(game.robots, robot => {
             robot.program = []
             robot.compiled = false
-            console.info(MSG_TYPE_SERVER_GAME_CARDS, robot.id)
-            console.info(MSG_TYPE_SERVER_GAME_CARDS, robot.id, " ; ", robot.position, " ; ", robot.direction)
             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
         })
     }
@@ -183,11 +183,9 @@ io.sockets.on('connection', socket => {
   }
 
   runProgram = function() {
-      console.info('server:runProgram', game.getProgramsSorted())
 
       let commands = game.resolveTurn()
 
-      console.info('server:runProgram', commands)
       _.each(game.robots, robot => {
         io.sockets.sockets[robot.id].emit('server:runProgram', commands)
       })
@@ -197,7 +195,6 @@ io.sockets.on('connection', socket => {
 
   // When client disconnect...
   socket.on('disconnect', () => {
-        console.info('client:disconnect', socket.id)
         // removing the client from the lobby...
         removeRobot(socket.id);
 
@@ -224,4 +221,3 @@ io.sockets.on('connection', socket => {
 // setInterval(() => {}, 1000)
 
 server.listen(7777)
-console.info('server started')

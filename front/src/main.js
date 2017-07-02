@@ -33,33 +33,8 @@ const MSG_TYPE_CLIENT_JOIN_GAME = 'client:join_game';
 const MSG_TYPE_SERVER_GAMES = 'server:games';
 const MSG_TYPE_SERVER_GAME_PPL_UPD= 'server:game:pplupd';
 const MSG_TYPE_SERVER_GAME_CARDS= 'server:game:cards';
-/*
-var gameList = [
-    {
-        id: 100,
-        name : "come, fast",
-        nbPlayers : 2,
-        maxPlayers : 4
-    },
-    {
-        id: 130,
-        name : "noobs only",
-        nbPlayers : 2,
-        maxPlayers : 4
-    },
-    {
-        id: 110,
-        name : "King of the north !!",
-        nbPlayers : 2,
-        maxPlayers : 4
-    },
-    {
-        id: 120,
-        name : "hello, come and beat me ;-)",
-        nbPlayers : 2,
-        maxPlayers : 4
-    }
-]*/
+const MSG_TYPE_SERVER_ERROR = 'server:error';
+
 
 var avatarList = [
     {
@@ -134,14 +109,17 @@ window.game = new Game()
 window.socket = io(`http://localhost:7777`);
 
 
-window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game, robot}) => {
+window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
+        console.log("game update players list");
         window.game.datas = game
-        window.game.robot = robot
         document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
         //errasing ppl list (usefull in case a player left)
         document.getElementById("inGamePlayerList").innerHTML = "";
-
         for (var i = 0; i < game.robots.length; i++) {
+            if (game.robots[i].id == window.socket.id){
+                window.game.robot = game.robots[i];
+            }
+
             var img = document.createElement('img');
             img.src = avatarList[game.robots[i].avatarId].src;
             img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
@@ -162,17 +140,21 @@ window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game, robot}) => {
         }
         document.getElementById('lobby').style.display = "none";
         document.getElementById('game').style.display = "flex";
-        window.game.state.start('Waiting')
+        window.game.state.start('Waiting');
     }
     
 )
 
 window.socket.on(MSG_TYPE_SERVER_GAME_CARDS, ({ game, robot }) => {
-    console.info(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
-    window.game.datas = game
-    window.game.robot = robot
-    window.game.state.start('Game')
+    console.log('update game list');
+    window.game.datas = game;
+    window.game.robot = robot;
+    window.game.state.start('Game');
     document.getElementById('hoverPlayerList').style.display = "none";
+})
+
+window.socket.on(MSG_TYPE_SERVER_ERROR, (message) => {
+    window.alert(message);
 })
 
 window.socket.on('server:runProgram', (flow) => {

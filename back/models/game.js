@@ -7,6 +7,9 @@ var Card = require('./card')
 var Command = require('./../models/command')
 var Types = require('./../models/types')
 var Robot = require('./../models/robot')
+var Server = require('./../server')
+
+
 
 const initalPositions = [
     {x: 0, y: 3},
@@ -35,18 +38,20 @@ module.exports = class Game {
     }
     addRobot(robot) {
         if(this.robots.length < this.maxPlayers) {
-            robot.color = initalColors[this.robots.length]
-            robot.fill = initalFills[this.robots.length]
-            robot.position = Object.assign({},initalPositions[this.robots.length])
-            robot.initialPosition = Object.assign({},initalPositions[this.robots.length])
-            this.robots.push(robot)
-            this.started = this.robots.length >= this.maxPlayers
-            return true
+            robot.color = initalColors[this.robots.length];
+            robot.fill = initalFills[this.robots.length];
+            robot.position = Object.assign({},initalPositions[this.robots.length]);
+            robot.initialPosition = Object.assign({},initalPositions[this.robots.length]);
+            this.robots.push(robot);
+            this.started = this.robots.length >= this.maxPlayers;
+            Server.gameUpdatePlayerList(this);
+            return true;
         }
-        return false
+        return false;
     }
     removeRobot(id) {
-        this.robots = _.filter(this.robots, robot => robot.id != id)
+        this.robots = _.filter(this.robots, robot => robot.id != id);
+        Server.gameUpdatePlayerList(this.id);
     }
     getRobot(id){
         return _.find(this.robots, robot => robot.id == id)
