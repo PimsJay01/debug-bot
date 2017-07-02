@@ -63,12 +63,8 @@ module.exports = class Game {
     }
     distributeCards(){
         _.each(this.robots, robot => {
-            console.info(robot.program)
-            robot.cards = _.filter(robot.cards, card => !_.contains(robot.program, card))
-            console.info(robot.cards)
             robot.cards = this.deck.completeCards(robot.cards)
             this.deck.addCards(robot.program)
-            console.info(robot.program)
             robot.program = []
         })
     }
@@ -201,8 +197,8 @@ module.exports = class Game {
             if((robot.position.y < myRobot.position.y) && (robot.position.x == myRobot.position.x) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
-                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 console.log("robot ", myRobot.id, " shoots one laser in the NORTH direction to robot ", robot.id)
               }
             }
@@ -213,8 +209,8 @@ module.exports = class Game {
             if((robot.position.y > myRobot.position.y) && (robot.position.x == myRobot.position.x) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
-                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 console.log("robot ", myRobot.id, " shoots one laser in the SOUTH direction to robot ", robot.id)
               }
             }
@@ -225,8 +221,8 @@ module.exports = class Game {
             if((robot.position.x > myRobot.position.x) && (robot.position.y == myRobot.position.y) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
-                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 console.log("robot ", myRobot.id, " shoots one laser in the EAST direction to robot ", robot.id)
               }
             }
@@ -237,8 +233,8 @@ module.exports = class Game {
             if((robot.position.x < myRobot.position.x) && (robot.position.y == myRobot.position.y) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
-                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 console.log("robot ", myRobot.id, " shoots one laser in the WEST direction to robot ", robot.id)
               }
             }
@@ -248,6 +244,7 @@ module.exports = class Game {
           break
         }
     }
+    return commands
     }
 
     travelator(pos) {

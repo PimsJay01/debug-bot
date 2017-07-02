@@ -28,6 +28,7 @@ export default class extends Phaser.State {
 
         this.indexFlow = 0;
         this.interval = setInterval(() => {
+            this.map.hideLaser()
             if(window.game.flow.length > this.indexFlow) {
                 let command = window.game.flow[this.indexFlow]
                 console.info('command', command)
@@ -35,25 +36,31 @@ export default class extends Phaser.State {
                 console.info('robot', robot)
                 switch(command.action) {
                     case 0 :
-                        robot.position.y--;
+                        robot.position.y--
                         break;
                     case 1 :
-                        robot.position.x++;
+                        robot.position.x++
                         break;
                     case 2 :
-                        robot.position.y++;
+                        robot.position.y++
                         break;
                     case 3 :
-                        robot.position.x--;
+                        robot.position.x--
                         break;
                     case 4 :
-                        robot.direction = (robot.direction + 1) % 4;
+                        robot.direction = (robot.direction + 1) % 4
                         break;
                     case 5 :
-                        robot.direction = (robot.direction + 3) % 4;
+                        robot.direction = (robot.direction + 3) % 4
                         break;
                     case 6 :
-                        robot.direction = (robot.direction + 2) % 4;
+                        robot.direction = (robot.direction + 2) % 4
+                        break;
+                    case 8 : // remove life
+                        robot.health--
+                        break;
+                    case 9 : // laser fire
+                        this.map.displayLaser(robot)
                         break;
                 }
                 this.robot = robot
