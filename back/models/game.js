@@ -192,49 +192,54 @@ module.exports = class Game {
     }
 
     fireLaser(myRobot, idProg){
+      console.log("start fire laser for robot ", myRobot.id)
       let commands = []
       if(!myRobot.felt && myRobot.health > 0){
         switch(myRobot.direction){
         case  this.types.MovementType.NORTH:
           _.each(this.robots, robot => {
-            if((robot.position.y < myRobot.position.y) && this.isInTheMap(robot.position)){
+            if((robot.position.y < myRobot.position.y) && (robot.position.x == myRobot.position.x) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
                 commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                console.log("robot ", myRobot.id, " shoots one laser in the NORTH direction to robot ", robot.id)
               }
             }
           })
           break;
         case  this.types.MovementType.SOUTH:
           _.each(this.robots, robot => {
-            if((robot.position.y > myRobot.position.y) && this.isInTheMap(robot.position)){
+            if((robot.position.y > myRobot.position.y) && (robot.position.x == myRobot.position.x) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
                 commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                console.log("robot ", myRobot.id, " shoots one laser in the SOUTH direction to robot ", robot.id)
               }
             }
           })
           break;
         case  this.types.MovementType.EAST:
           _.each(this.robots, robot => {
-            if((robot.position.x > myRobot.position.x) && this.isInTheMap(robot.position)){
+            if((robot.position.x > myRobot.position.x) && (robot.position.y == myRobot.position.y) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
                 commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                console.log("robot ", myRobot.id, " shoots one laser in the EAST direction to robot ", robot.id)
               }
             }
           })
           break;
         case  this.types.MovementType.WEST:
           _.each(this.robots, robot => {
-            if((robot.position.x < myRobot.position.x) && this.isInTheMap(robot.position)){
+            if((robot.position.x < myRobot.position.x) && (robot.position.y == myRobot.position.y) && this.isInTheMap(robot.position)){
               if(robot.health > 0){
                 robot.health--;
                 commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
                 commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+                console.log("robot ", myRobot.id, " shoots one laser in the WEST direction to robot ", robot.id)
               }
             }
           })
