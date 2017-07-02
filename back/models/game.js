@@ -151,6 +151,11 @@ module.exports = class Game {
             default:
               break
           }
+          let travel = this.travelator(robot.position)
+          robot.move(travel, 1)
+          if (travel != this.types.MovementType.STAY) {
+            commands.push(new Command(program.robotId, program.line.id, travel))
+          }
         } else {
           robot.position = Object.assign({}, robot.initialPosition)
           robot.direction = this.types.MovementType.EAST
@@ -170,6 +175,14 @@ module.exports = class Game {
       return commands;
     }
 
+    travelator(pos) {
+      let res = this.board[pos.x][pos.y].type - 5
+      if (res < 0 || res > 4) {
+        res = this.types.MovementType.STAY
+      }
+      return res
+    }
+
     isInTheMap(pos) {
       let height = this.board[0].length
       let width = this.board.length
@@ -181,8 +194,6 @@ module.exports = class Game {
     }
 
     hasFallen(pos) {
-      console.info("hasFallen:position ", pos)
-      console.info("hasFallen:boardType ", this.board[pos.x][pos.y].type)
       return ((this.board[pos.x][pos.y].type == this.types.BoxType.HOLE) || !this.isInTheMap(pos))
     }
 
@@ -256,6 +267,8 @@ module.exports = class Game {
         })
         return Math.min(nbStep, nbStepFall)
     }
+
+
 
     getRobotById(robotId) {
       let res
