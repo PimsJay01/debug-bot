@@ -101,7 +101,7 @@ module.exports = class Game {
       console.info("RESOLVE TURN : ", this.currentTurn);
       _.each(programs, program => {
         let robot = this.getRobotById(program.robotId)
-        if (!robot.felt) {
+        if (!robot.felt && robot.health > 0) {
           switch (program.line.type) {
             case this.types.CardType.U_TURN:
               robot.uTurn()
@@ -151,19 +151,31 @@ module.exports = class Game {
             default:
               break
           }
+
+
+
           let travel = this.travelator(robot.position)
           robot.move(travel, 1)
           if (travel != this.types.MovementType.STAY) {
             commands.push(new Command(program.robotId, program.line.id, travel))
           }
-        } else {
+
+          let newCommands = this.fireLaser(robot,program.line.id)
+          _.each(newCommands, command => {
+            commands.push(command)
+          })
+
+
+        } /*else {
           robot.position = Object.assign({}, robot.initialPosition)
           robot.direction = this.types.MovementType.EAST
-        }
+        }*/
+
       })
       _.each(this.robots, robot => {
         console.log(robot.id, robot.felt ? "je suis tombé" : "je suis toujours là")
-        if (robot.felt) {
+        if (robot.felt || robot.health == 0) {
+          robot.health = config.maxHealth
           robot.felt = false
           robot.position = Object.assign({}, robot.initialPosition)
           robot.direction = this.types.MovementType.EAST
@@ -173,6 +185,60 @@ module.exports = class Game {
         }
       })
       return commands;
+    }
+
+    fireLaser(myRobot, idProg){
+      let commands = []
+      if(!myRobot.felt && myRobot.health > 0){
+        switch(myRobot.direction){
+        case  this.types.MovementType.NORTH:
+          _.each(this.robots, robot => {
+            if((robot.position.y < myRobot.position.y) && this.isInTheMap(robot.position)){
+              if(robot.health > 0){
+                robot.health--;
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
+                commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+              }
+            }
+          })
+          break;
+        case  this.types.MovementType.SOUTH:
+          _.each(this.robots, robot => {
+            if((robot.position.y > myRobot.position.y) && this.isInTheMap(robot.position)){
+              if(robot.health > 0){
+                robot.health--;
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
+                commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+              }
+            }
+          })
+          break;
+        case  this.types.MovementType.EAST:
+          _.each(this.robots, robot => {
+            if((robot.position.x > myRobot.position.x) && this.isInTheMap(robot.position)){
+              if(robot.health > 0){
+                robot.health--;
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
+                commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+              }
+            }
+          })
+          break;
+        case  this.types.MovementType.WEST:
+          _.each(this.robots, robot => {
+            if((robot.position.x < myRobot.position.x) && this.isInTheMap(robot.position)){
+              if(robot.health > 0){
+                robot.health--;
+                commands.push(new Command(robot.id, idProg, this.types.MovementType.REMOVELIFE))
+                commands.push(new Command(myRobot.id, idProg, this.types.MovementType.FIRELASER))
+              }
+            }
+          })
+          break;
+        default:
+          break
+        }
+    }
     }
 
     travelator(pos) {

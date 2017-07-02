@@ -10,7 +10,9 @@ module.exports = class Types {
           TURN_RIGHT : 4,
           TURN_LEFT : 5,
           U_TURN : 6,
-          STAY : 7
+          STAY : 7,
+          REMOVELIFE : 8,
+          FIRELASER : 9
         }
 
         this.BoxType = {
