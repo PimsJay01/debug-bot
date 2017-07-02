@@ -14,7 +14,7 @@ const Type = {
     TRAVELATOR_N_S : 7,
     TRAVELATOR_E_W : 8,
     HOLE : 9,
-    OBJECTIVE : 10
+    TARGET : 10
 }
 
 export default class {
@@ -25,6 +25,16 @@ export default class {
         game.load.image('start2', res.tiles.start2)
         game.load.image('start3', res.tiles.start3)
         game.load.image('start4', res.tiles.start4)
+        game.load.image('travelatorWE', res.tiles.travelatorWE)
+        game.load.image('travelatorNS', res.tiles.travelatorNS)
+        game.load.image('travelatorEW', res.tiles.travelatorEW)
+        game.load.image('travelatorSN', res.tiles.travelatorSN)
+        game.load.image('target', res.tiles.target)
+
+        game.load.image('wallN', res.tiles.wallN)
+        game.load.image('wallE', res.tiles.wallE)
+        game.load.image('wallS', res.tiles.wallS)
+        game.load.image('wallW', res.tiles.wallW)
 
         game.load.image('robot1n', res.tiles.robot1n)
         game.load.image('robot1e', res.tiles.robot1e)
@@ -58,8 +68,23 @@ export default class {
                     case Type.START_4:
                         boxType = 'start4'
                         break;
+                    case Type.TRAVELATOR_S_N:
+                        boxType = 'travelatorSN'
+                        break;
+                    case Type.TRAVELATOR_W_E:
+                        boxType = 'travelatorWE'
+                        break;
+                    case Type.TRAVELATOR_N_S:
+                        boxType = 'travelatorNS'
+                        break;
+                    case Type.TRAVELATOR_E_W:
+                        boxType = 'travelatorEW'
+                        break;
                     case Type.HOLE:
                         boxType = 'hole'
+                        break;
+                    case Type.TARGET:
+                        boxType = 'target'
                         break;
                     default:
                         boxType = 'default'
@@ -67,6 +92,32 @@ export default class {
                 if(boxType != 'hole') {
                     let test = game.add.image(position.x, position.y, boxType)
 
+                    this.map.add(test)
+                }
+            }
+        }
+
+        for(let x=game.datas.board.length-1; x>=0; x--) {
+            for(let y=0; y<game.datas.board[x].length; y++) {
+                let position = {
+                    x : this.getPositionXOnMap(x, y),
+                    y : this.getPositionYOnMap(x + 1.5, y)
+                }
+
+                if(game.datas.board[x][y].walls[0]) {
+                    let test = game.add.image(position.x, position.y, 'wallN')
+                    this.map.add(test)
+                }
+                if(game.datas.board[x][y].walls[1]) {
+                    let test = game.add.image(position.x, position.y, 'wallE')
+                    this.map.add(test)
+                }
+                if(game.datas.board[x][y].walls[2]) {
+                    let test = game.add.image(position.x, position.y, 'wallS')
+                    this.map.add(test)
+                }
+                if(game.datas.board[x][y].walls[3]) {
+                    let test = game.add.image(position.x, position.y, 'wallW')
                     this.map.add(test)
                 }
             }
@@ -93,7 +144,7 @@ export default class {
 
         var factor = game.width / this.map.width
         this.map.scale = new Phaser.Point(factor, factor)
-        this.map.top = (game.height - this.map.height) / 2.0
+        this.map.top = 0
         this.map.left = 0
 
         this.animationDone = true;
@@ -107,18 +158,8 @@ export default class {
         return (this.height / 3.0 * y) - (this.height / 3.0 * x) + 1;
     }
 
-    // isAnimationDone() {
-    //     return this.animationDone;
-    // }
-    //
-    // focus(robotId) {
-    //     let indexRobot = _.indexOf(this.robots, _.filter(this.robots, robot => robot.id = robotId))
-    //
-    // }
-
     render() {
         // TODO sort robot before display them
-        // this.lifes.removeAll()
         _.each(game.datas.robots, robot => {
             _.each(['n', 'e', 's', 'w'], (direction, indexImage) => {
                 this.robots[robot.id][indexImage].visible = false
@@ -135,7 +176,6 @@ export default class {
     displayLife(robot, x, y) {
         let graphics = this.lifes[robot.id]
         graphics.clear()
-        // graphics.lineStyle(2, 0xFF0000, 1);
         graphics.beginFill(0xFF0000, 1)
         let size = (graphics.x / 5.0) - 8;
         _.each(_.range(robot.health), index => {

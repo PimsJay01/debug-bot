@@ -4,6 +4,6 @@ module.exports = {
 
     gameTime: 120,
     robotMaxCards: 9,
-    maxPlayers: 4,
+    maxPlayers: 2,
     maxHealth: 5,
 }
