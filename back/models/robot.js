@@ -10,6 +10,7 @@ module.exports = class Robot {
         this.fill = '#FFFFFF'
         this.avatarId = avatarId
         this.position = { x: 0, y: 0 }
+        this.initialPosition = {}
         this.direction = 1
         this.health = config.maxHealth
         this.cards = []
@@ -17,6 +18,7 @@ module.exports = class Robot {
         this.compiled = false
         this.types = new Types()
         this.animation = 0
+        this.felt = false
     }
 
     moveXSteps(steps) {
