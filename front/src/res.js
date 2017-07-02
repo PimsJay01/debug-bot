@@ -41,6 +41,9 @@ export const res = {
         robot1w : tiles + 'robot_1_west.png'
     },
     sounds : {
-        musicGame : [sounds+'musicGame2.mp3', sounds+'musicGame2.ogg']
+        musicGame : [sounds+'musicGame2.mp3', sounds+'musicGame2.ogg'],
+        laser : [sounds+'laser3.mp3', sounds+'laser3.ogg'],
+        win : [sounds+'win.mp3', sounds+'win.ogg'],
+        card : [sounds+'cardChoice.mp3', sounds+'cardChoice.ogg']
     }
 }
