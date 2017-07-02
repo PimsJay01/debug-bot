@@ -55,7 +55,8 @@ module.exports = class Game {
         return false;
     }
     removeRobot(id) {
-        this.robots = _.filter(this.robots, robot => robot.id != id);
+        this.deck.addCards(this.getRobot(id).cards)
+        this.robots = _.filter(this.robots, robot => robot.id != id)
         Server.gameUpdatePlayerList(this.id);
     }
     getRobot(id){
@@ -97,9 +98,11 @@ module.exports = class Game {
             this.deck.addCards(robot.program)
             robot.program = []
         })
+        console.info("DISTRIBUTE CARD, size of the deck after distribution : ", this.deck.cards.length);
     }
 
 
+<<<<<<< HEAD
     setRobotReady(robotId) {
         let robot = this.getRobot(robotId);
         robot.ready = true;
@@ -110,6 +113,8 @@ module.exports = class Game {
         }
     }
 
+=======
+>>>>>>> master
     setRobotAnimationEnded(robotId) {
         let robot = this.getRobot(robotId)
         robot.animationEnded = true
