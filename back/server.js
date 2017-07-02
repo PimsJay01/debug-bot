@@ -55,6 +55,7 @@ io.sockets.on('connection', socket => {
 
 
       if(game.addRobot(robot)) {
+          console.info("robot added at ", robot.position, " ; ", robot.initialPosition)
           if(game.isStarted()) {
             console.log('starting game...');
 
