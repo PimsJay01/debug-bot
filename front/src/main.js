@@ -84,7 +84,7 @@ window.robotSelected = function(event){
 
 window.game = new Game()
 
-window.socket = io(`http://37.35.109.104:7777`);
+window.socket = io('http://37.35.109.104:7777');
 
 
 window.socket.on('server:game:pplupd', ({ game, robot }) => {
