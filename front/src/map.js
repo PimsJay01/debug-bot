@@ -151,12 +151,13 @@ export default class {
             this.robots[robot.id] = robotImages
         })
 
+        this.laser = game.add.graphics(0, 0);
+        this.map.add(this.laser)
+
         var factor = game.width / this.map.width
         this.map.scale = new Phaser.Point(factor, factor)
         this.map.top = 0
         this.map.left = 0
-
-        this.animationDone = true;
     }
 
     getPositionXOnMap(x, y) {
@@ -180,6 +181,13 @@ export default class {
             temp.y = this.getPositionYOnMap(robot.position.x + 1, robot.position.y)
             this.displayLife(robot, temp.x, temp.y)
         })
+
+        if(_.random(0, 2) == 0) {
+            this.laser.visible = false
+        }
+        else {
+            this.laser.visible = true
+        }
     }
 
     displayLife(robot, x, y) {
@@ -191,5 +199,53 @@ export default class {
             graphics.drawRect(x - this.width + (index * (size + 8)), y - (this.height / 4.0), size, graphics.y)
         })
         graphics.endFill()
+    }
+
+    displayLaser(robot) {
+        let start = {
+            x : this.getPositionXOnMap(robot.position.x, robot.position.y) + this.width / 2.0,
+            y : this.getPositionYOnMap(robot.position.x + 1, robot.position.y) + this.height / 2.0
+        }
+        this.laser.lineStyle(8, robot.color, 1)
+        this.laser.moveTo(start.x, start.y)
+
+        // console.info(game.datas.board)
+        let max = {
+            x : game.datas.board.length,
+            y : game.datas.board[0].length
+        }
+
+        let dest = { x : 0, y : 0}
+        switch(robot.direction) {
+            case 0 :
+                dest = {
+                    x : this.getPositionXOnMap(robot.position.x, -(robot.position.x + 1)) + this.width / 2.0,
+                    y : this.getPositionYOnMap(robot.position.x + 1, -(robot.position.x + 1)) + this.height / 2.0
+                }
+            break
+            case 1 :
+                dest = {
+                    x : this.getPositionXOnMap(max.x + max.y, robot.position.y) + this.width / 2.0,
+                    y : this.getPositionYOnMap(max.x + max.y + 1, robot.position.y) + this.height / 2.0
+                }
+            break
+            case 2 :
+                dest = {
+                    x : this.getPositionXOnMap(robot.position.x, max.x + max.y) + this.width / 2.0,
+                    y : this.getPositionYOnMap(robot.position.x + 1, max.x + max.y) + this.height / 2.0
+                }
+            break
+            case 3 :
+                dest = {
+                    x : this.getPositionXOnMap(-(robot.position.y + 1), robot.position.y) + this.width / 2.0,
+                    y : this.getPositionYOnMap(-(robot.position.y + 1) + 1, robot.position.y) + this.height / 2.0
+                }
+            break
+        }
+        this.laser.lineTo(dest.x, dest.y)
+    }
+
+    hideLaser() {
+        this.laser.clear()
     }
 }

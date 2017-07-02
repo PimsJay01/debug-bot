@@ -194,17 +194,21 @@ io.sockets.on('connection', socket => {
             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_END, robot.winner)
         })
       } else {
-        game.distributeCards();
-        _.each(game.robots, robot => {
-            robot.ready = false
-            io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
-        })
+        if (game.setRobotAnimationEnded(newRobot.id)) {
+          game.distributeCards();
+          _.each(game.robots, robot => {
+              robot.compiled = false
+              robot.animationEnded = false
+             io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
+          })
+        }
     }
   })
 
   isGameOver = function(game) {
     let yes = false
     _.each(game.robots, robot => {
+        console.info(robot.program)
       if (robot.winner) {
         yes = true
       }
