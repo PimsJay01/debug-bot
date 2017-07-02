@@ -29,19 +29,23 @@ class Game extends Phaser.Game {
 var avatarList = [
     {
         selected : false,
-        src : "./assets/images/avatar_fluffy.png"
+        src : "./assets/images/avatar_fluffy.png",
+        name : "Fluf" //modif
     },
     {
         selected : false,
-        src : "./assets/images/avatar_lavander.png"
+        src : "./assets/images/avatar_lavander.png",
+        name : "Lavy" //modif
     },
     {
         selected : false,
-        src : "./assets/images/avatar_silhouette.png"
+        src : "./assets/images/avatar_silhouette.png",
+        name : "Sil" //modif
     },
     {
         selected : false,
-        src : "./assets/images/avatar_skurts.png"
+        src : "./assets/images/avatar_skurts.png",
+        name : "Skurt" //modif
     }
 ]
 
@@ -49,10 +53,14 @@ window.loadHTMLUI = function(){
     for (var i = 0; i < avatarList.length; i++) {
         var li = document.createElement('li');
         var img = document.createElement('img');
+        var avatarName = document.createElement('div');
+        avatarName.innerHTML = avatarList[i].name
+        avatarName.style = "text-align: center";
         img.id = i;
         img.src = avatarList[i].src;
         img.style = "height: 60px; width:60px; border-radius: 50%; margin:5px;";
         img.onclick = window.robotSelected;
+        li.appendChild(avatarName);
         li.appendChild(img);
         document.getElementById("avatarList").appendChild(li);
     }
@@ -90,6 +98,7 @@ window.socket.on('server:game:pplupd', ({ game, robot }) => {
     for (var i = 0; i < game.robots.length; i++) {
         var img = document.createElement('img');
         img.src = avatarList[game.robots[i].avatarId].src;
+
         img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
         var li = document.createElement('li');
         var playerName = document.createElement('div');
