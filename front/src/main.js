@@ -135,36 +135,37 @@ window.socket = io(`http://localhost:7777`);
 
 
 window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game, robot}) => {
-    console.info(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot })
-    window.game.datas = game
-    window.game.robot = robot
-    document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
-    //errasing ppl list (usefull in case a player left)
-    document.getElementById("inGamePlayerList").innerHTML = "";
+        window.game.datas = game
+        window.game.robot = robot
+        document.getElementById('playerAmount').innerHTML = "Players: " + game.robots.length + "/" + game.maxPlayers;
+        //errasing ppl list (usefull in case a player left)
+        document.getElementById("inGamePlayerList").innerHTML = "";
 
-    for (var i = 0; i < game.robots.length; i++) {
-        var img = document.createElement('img');
-        img.src = avatarList[game.robots[i].avatarId].src;
-        img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
-        var li = document.createElement('li');
-        var playerName = document.createElement('div');
-        playerName.innerHTML = game.robots[i].name;
-        playerName.style.marginRight = '10px';
-        playerName.style.marginLeft = '5px';
-        li.style.marginTop = '5px';
-        li.style.border = '2px solid ' + game.robots[i].fill;
-        li.style.display = 'flex';
-        li.style.alignItems = 'center';
-        li.style.borderRadius = '30px';
-        li.style.backgroundColor = 'rgba(' + parseInt(game.robots[i].fill.substring(1,3), 16) + ',' + parseInt(game.robots[i].fill.substring(3,5), 16) +',' + parseInt(game.robots[i].fill.substring(5,7), 16) + ', 0.6)';
-        document.getElementById("inGamePlayerList").appendChild(li);
-        li.appendChild(img);
-        li.appendChild(playerName);
+        for (var i = 0; i < game.robots.length; i++) {
+            var img = document.createElement('img');
+            img.src = avatarList[game.robots[i].avatarId].src;
+            img.style = "height: 40px; width:40px; border-radius: 50%; margin:5px;";
+            var li = document.createElement('li');
+            var playerName = document.createElement('div');
+            playerName.innerHTML = game.robots[i].name;
+            playerName.style.marginRight = '10px';
+            playerName.style.marginLeft = '5px';
+            li.style.marginTop = '5px';
+            li.style.border = '2px solid ' + game.robots[i].fill;
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.borderRadius = '30px';
+            li.style.backgroundColor = 'rgba(' + parseInt(game.robots[i].fill.substring(1,3), 16) + ',' + parseInt(game.robots[i].fill.substring(3,5), 16) +',' + parseInt(game.robots[i].fill.substring(5,7), 16) + ', 0.6)';
+            document.getElementById("inGamePlayerList").appendChild(li);
+            li.appendChild(img);
+            li.appendChild(playerName);
+        }
+        document.getElementById('lobby').style.display = "none";
+        document.getElementById('game').style.display = "flex";
+        window.game.state.start('Waiting')
     }
-    document.getElementById('lobby').style.display = "none";
-    document.getElementById('game').style.display = "flex";
-    window.game.state.start('Waiting')
-})
+    
+)
 
 window.socket.on(MSG_TYPE_SERVER_GAME_CARDS, ({ game, robot }) => {
     console.info(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })

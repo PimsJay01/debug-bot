@@ -114,6 +114,10 @@ io.sockets.on('connection', socket => {
         if(game.addRobot(robot)){
             // the robot could be added to the game
             removeRobot(robot.id);
+            _.each(game.robots, robot => {
+                io.sockets.emit(MSG_TYPE_SERVER_GAMES, gamesNotStarted());
+                io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot })
+            })
             if(game.isStarted()) {
                 console.log('starting game...');
 
@@ -122,14 +126,9 @@ io.sockets.on('connection', socket => {
 
                 _.each(game.robots, robot => {
                     console.info(MSG_TYPE_SERVER_GAME_CARDS, robot.id)
-                    //the clients must first be updated that the game is full so that they can prepare for startup
                     io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_CARDS, { game, robot })
                 })
-            } 
-            _.each(game.robots, robot => {
-                io.sockets.emit(MSG_TYPE_SERVER_GAMES, gamesNotStarted());
-                io.sockets.sockets[robot.id].emit(MSG_TYPE_SERVER_GAME_PPL_UPD, { game, robot })
-            })
+            }
         } // TODO game full message
   })
 
