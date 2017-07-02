@@ -11,15 +11,16 @@ module.exports = class Robot {
         this.avatarId = avatarId
         this.position = { x: 0, y: 0 }
         this.initialPosition = {}
-        this.direction = 1
+        this.direction = 1 // 0 - 3
         this.health = config.maxHealth
         this.cards = []
         this.program = []
         this.compiled = false
         this.types = new Types()
-        this.animation = 0
+        this.animationEnded = false 
         this.felt = false
         this.winner = false
+
     }
 
     moveXSteps(steps) {

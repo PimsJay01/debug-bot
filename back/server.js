@@ -97,26 +97,32 @@ io.sockets.on('connection', socket => {
   })
 
   socket.on('client:stepover', (newRobot) => {
-      console.info('cient:stepover')
-      let robot = _.find(game.robots, robot => robot.id == newRobot.id)
+      console.info('cient:stepover -> ', newRobot.id)
       if (isGameOver()) {
+        console.info('server:gameover detected')
         _.each(game.robots, robot => {
             io.sockets.sockets[robot.id].emit('server:gameover', robot.winner)
         })
       } else {
-        game.distributeCards();
-        _.each(game.robots, robot => {
-            robot.compiled = false
-            console.info('server:cards', robot.id)
-            console.info("server:cards: ", robot.id, " ; ", robot.position, " ; ", robot.direction)
-            io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
-        })
+        console.info('game goes on')
+        if (game.setRobotAnimationEnded(newRobot.id)) {
+          console.info('all robot ended there animation')
+          game.distributeCards();
+          _.each(game.robots, robot => {
+              robot.compiled = false
+              robot.animationEnded = false
+              console.info('server:cards', robot.id)
+              console.info("server:cards: ", robot.id, " ; ", robot.position, " ; ", robot.direction)
+              io.sockets.sockets[robot.id].emit('server:cards', { game, robot })
+          })
+        }
     }
   })
 
   isGameOver = function() {
     let yes = false
     _.each(game.robots, robot => {
+        console.info(robot.program)
       if (robot.winner) {
         yes = true
       }
