@@ -79,7 +79,7 @@ module.exports = class Game {
     }
 
     distributeCards(){
-        _.each(this.robots, robot =>
+        _.each(this.robots, robot => {
             robot.cards = this.filterCards(robot)
             robot.cards = this.deck.completeCards(robot.cards)
             this.deck.addCards(robot.program)
