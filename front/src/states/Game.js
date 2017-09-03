@@ -65,11 +65,11 @@ export default class extends Phaser.State {
 
       //game.robot.avatarId
 
-        if(!musicPlaying){
+        if(musicPlaying){
           music = game.add.audio('musicGame')
           music.play()
           music.loopFull()
-          musicPlaying = true
+          musicPlaying = false
         }
 
         this.cardSound = game.add.audio('cardSound')
