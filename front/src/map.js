@@ -70,11 +70,6 @@ export default class {
 
         let background = game.add.image(0, 0, 'background')
 
-        //background.x = 0
-        //background.y = 0
-        background.height = game.height
-        background.widht = game.width
-
         this.map = game.add.group()
 
         for(let x=game.datas.board.length-1; x>=0; x--) {
@@ -174,9 +169,9 @@ export default class {
         this.laser = game.add.graphics(0, 0);
         this.map.add(this.laser)
 
-        var factor = game.width / this.map.width
+        var factor = (game.width * 0.8) / this.map.width
         this.map.scale = new Phaser.Point(factor, factor)
-        this.map.top = 0
+        this.map.top = (Math.max(window.innerHeight, document.documentElement.clientHeight) - this.map.height) / 2.0
         this.map.left = 0
     }
 

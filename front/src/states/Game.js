@@ -69,11 +69,11 @@ export default class extends Phaser.State {
 
       //game.robot.avatarId
 
-        if(!musicPlaying){
+        if(musicPlaying){
           music = game.add.audio('musicGame')
           music.play()
           music.loopFull()
-          musicPlaying = true
+          musicPlaying = false
         }
 
         this.cardSound = game.add.audio('cardSound')
@@ -101,6 +101,13 @@ export default class extends Phaser.State {
             boundsAlignV: 'middle'
         }, this.interface)
         this.programLabel.setTextBounds(6 * this.width, 0, 5 * this.width - 8, this.height / 2.0)
+
+        game.add.text(0, 0, 'Chat disabled', {
+            font: '32px Arial',
+            fill: '#ff0000',
+            boundsAlignH: 'right',
+            boundsAlignV: 'middle'
+        }, this.interface).setTextBounds(7.5 * this.width, -this.height / 2.0, 5 * this.width, this.height / 2.0)
 
         this.coloravatar = game.add.graphics(0, 0)
         this.coloravatar.beginFill(game.robot.color, 1)
