@@ -80,7 +80,7 @@ module.exports = class Game {
             this.deck.addCards(robot.cards)
         }
         this.robots = _.filter(this.robots, robot => robot.id != id)
-        Server.gameUpdatePlayerList(this.id);
+        Server.gameUpdatePlayerList(this);
     }
     getRobot(id){
         return _.find(this.robots, robot => robot.id == id)

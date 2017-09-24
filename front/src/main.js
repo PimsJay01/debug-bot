@@ -253,11 +253,13 @@ window.emitName = function() {
 window.joinGame = function (){
 
     var htmlGameList = document.getElementById('gameList').childNodes;
-    var gameId
+    var gameId = null;
     for (var i = 0; i < htmlGameList.length; i++) {
         if (htmlGameList[i].className == "flexbox gameSelected") {
             gameId = htmlGameList[i].id;
         }
     }
-    window.socket.emit(MSG_TYPE_CLIENT_JOIN_GAME, gameId);
+    if (gameId !== null) {
+        window.socket.emit(MSG_TYPE_CLIENT_JOIN_GAME, gameId);
+    }
 }
