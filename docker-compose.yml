@@ -1,0 +1,20 @@
+version: '2'
+services:
+    debugbot_nodejs:
+        build: ./back
+        ports:
+            - "7777:7777"
+
+    debugbot_nginx:
+        image: nginx:1.13
+        links:
+            - debugbot_nodejs
+        volumes:
+            - ./front:/usr/share/nginx/html
+            # - ./nginx.conf:/etc/nginx/nginx.conf
+        ports:
+            - "8080:80"
+        # environment:
+        #     - NGINX_HOST=foobar.com
+        #     - NGINX_PORT=80
+        # command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
