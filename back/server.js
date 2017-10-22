@@ -170,13 +170,17 @@ io.sockets.on('connection', socket => {
     socket.on(MSG_TYPE_CLIENT_JOIN_GAME, gameId => {
         var robot = getRobotFromLobby(socket.id);
         game = getGame(gameId);
-        if(game.addRobot(robot)){
-            // the robot could be added to the game
-            // Hence, removing it fom lobby
-            removeRobotFromLobby(robot.id);
-            
-        } else{
-            io.sockets.emit(MSG_TYPE_SERVER_ERROR, "Sorry, you were not able to join the game as it is full");
+        if (game !== undefined) {
+            if (game.addRobot(robot)){
+                // the robot could be added to the game
+                // Hence, removing it fom lobby
+                removeRobotFromLobby(robot.id);
+                
+            } else {
+                io.sockets.emit(MSG_TYPE_SERVER_ERROR, "Sorry, you were not able to join the game as it is full");
+            }
+        } else {
+            io.sockets.emit(MSG_TYPE_SERVER_ERROR, "The game you are trying to join could not be find. It may have started or been deleted in the meantime");
         }
   })
 

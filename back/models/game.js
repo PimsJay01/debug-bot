@@ -57,7 +57,7 @@ module.exports = class Game {
         return this.started
     }
     addRobot(robot) {
-        if(this.robots.length < this.maxPlayers) {
+        if(this.robots.length < this.maxPlayers && robot !== null) {
             robot.color = initalColors[this.robots.length];
             robot.fill = initalFills[this.robots.length];
             robot.position = Object.assign({},initalPositions[this.robots.length]);
@@ -80,7 +80,7 @@ module.exports = class Game {
             this.deck.addCards(robot.cards)
         }
         this.robots = _.filter(this.robots, robot => robot.id != id)
-        Server.gameUpdatePlayerList(this.id);
+        Server.gameUpdatePlayerList(this);
     }
     getRobot(id){
         return _.find(this.robots, robot => robot.id == id)
