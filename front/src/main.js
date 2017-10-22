@@ -137,7 +137,7 @@ window.gameSelected = function(event){
 
 window.game = new Game()
 
-window.socket = io('http://localhost:7777');
+window.socket = io('http://37.35.109.104:7777');
 
 
 window.socket.on(MSG_TYPE_SERVER_GAME_PPL_UPD, ({game}) => {
