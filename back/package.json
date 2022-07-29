@@ -5,7 +5,7 @@
     "express": "*",
     "moment": "^2.17.1",
     "session.socket.io": "*",
-    "socket.io": "*",
+    "socket.io": "~2",
     "underscore": "^1.8.3"
   }
 }
